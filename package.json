@@ -1,0 +1,33 @@
+{
+  "name": "node-red-contrib-kolibri",
+  "version": "0.2.0",
+  "description": "Node-Red nodes for connecting to a Kolibri Broker",
+  "author": "HMS Networks",
+  "license": "Apache-2.0",
+  "main": "kolibri.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "node-red": {
+    "nodes": {
+      "kolibri": "kolibri.js"
+    }
+  },
+  "scripts": {
+    "test": "mocha \"test/**/*_spec.js\""
+  },
+  "keywords": [
+    "kolibri",
+    "node-red",
+    "iot",
+    "iiot",
+    "internet of things",
+    "broker",
+    "messaging"
+  ],
+  "devDependencies": {
+    "node-red": "^1.0.1",
+    "node-red-node-test-helper": "^0.2.3",
+    "should": "^13.2.3"
+  }
+}
