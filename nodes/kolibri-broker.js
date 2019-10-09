@@ -16,9 +16,9 @@
 
 module.exports = function (RED) {
     'use strict';
-    const ec = require('./lib/errorcode.js');
-    const tools = require('./lib/tools.js');
-    const KolibriConsumerConnection = require('./lib/consumer.js');
+    const ec = require('../lib/errorcode.js');
+    const tools = require('../lib/tools.js');
+    const KolibriConsumerConnection = require('../lib/consumer.js');
 
     function KolibriBrokerNode(config) {
         RED.nodes.createNode(this, config);
@@ -414,113 +414,4 @@ module.exports = function (RED) {
             password: { type: 'password' }
         }
     });
-
-    function KolibriInNode(config) {
-        // Create a RED node
-        RED.nodes.createNode(this, config);
-
-        // Store local copies of the node configuration (as defined in the .html)
-        this.path = config.path;
-        this.broker = config.broker;
-        this.brokerConn = RED.nodes.getNode(this.broker);
-
-        // Copy "this" object in case we need it in context of callbacks of other functions.
-        let node = this;
-
-        if (this.brokerConn) {
-            this.status({
-                fill: 'red',
-                shape: 'ring',
-                text: 'node-red:common.status.disconnected'
-            });
-
-            if (this.path) {
-                node.brokerConn.register(this);
-                this.brokerConn.subscribe(this.path, function (path, ts, tsb, qual, value) {
-                    let msg = {
-                        path: path,
-                        timestamp: ts,
-                        timestamp_broker: tsb,
-                        quality: qual,
-                        payload: value
-                    };
-
-                    node.send(msg);
-                });
-
-                if (this.brokerConn.connected) {
-                    node.status({
-                        fill: 'green',
-                        shape: 'dot',
-                        text: 'node-red:common.status.connected'
-                    });
-                }
-            }
-            else {
-                this.error('Kolibri: path not defined');
-            }
-
-            this.on('close', function (done) {
-                if (node.brokerConn) {
-                    node.brokerConn.unsubscribe(node.path);
-                    node.brokerConn.deregister(node, done);
-                }
-            });
-        }
-        else {
-            this.error('Kolibri: missing broker configuration');
-        }
-    }
-
-    RED.nodes.registerType('kolibri in', KolibriInNode);
-
-    function KolibriOutNode(config) {
-        // Create a RED node
-        RED.nodes.createNode(this, config);
-
-        // Store local copies of the node configuration (as defined in the .html)
-        this.path = config.path;
-        this.broker = config.broker;
-        this.brokerConn = RED.nodes.getNode(this.broker);
-
-        // Copy "this" object in case we need it in context of callbacks of other functions.
-        let node = this;
-
-        if (this.brokerConn) {
-            this.status({
-                fill: 'red',
-                shape: 'ring',
-                text: 'node-red:common.status.disconnected'
-            });
-
-            // Respond to inputs....
-            this.on('input', function (msg) {
-                if (this.brokerConn.connected) {
-                    node.status({
-                        fill: 'green',
-                        shape: 'dot',
-                        text: 'node-red:common.status.connected'
-                    });
-                }
-
-                let ps = {
-                    path: node.path,
-                    value: msg.payload
-                };
-
-                ps.timestamp = msg.timestamp || tools.currentTimestamp();
-                ps.quality = msg.quality || 1;
-
-                node.brokerConn.write(ps);
-            });
-
-            this.on('close', function () {
-                // Called when the node is shutdown - eg on redeploy.
-                // Allows ports to be closed, connections dropped etc.
-                // eg: node.client.disconnect();
-            });
-        }
-    }
-
-    RED.nodes.registerType('kolibri out', KolibriOutNode);
 };

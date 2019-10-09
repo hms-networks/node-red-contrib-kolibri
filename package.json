@@ -4,13 +4,15 @@
   "description": "Node-Red nodes for connecting to a Kolibri Broker",
   "author": "HMS Networks",
   "license": "Apache-2.0",
-  "main": "kolibri.js",
+  "main": "none",
   "directories": {
     "lib": "lib"
   },
   "node-red": {
     "nodes": {
-      "kolibri": "kolibri.js"
+      "kolibri-broker": "nodes/kolibri-broker.js",
+      "kolibri-in": "nodes/kolibri-in.js",
+      "kolibri-out": "nodes/kolibri-out.js"
     }
   },
   "scripts": {
