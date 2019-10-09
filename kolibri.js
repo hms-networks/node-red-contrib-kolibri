@@ -20,12 +20,12 @@ module.exports = function (RED) {
     const tools = require('./lib/tools.js');
     const KolibriConsumerConnection = require('./lib/consumer.js');
 
-    function KolibriBrokerNode(n) {
-        RED.nodes.createNode(this, n);
+    function KolibriBrokerNode(config) {
+        RED.nodes.createNode(this, config);
 
         // Configuration options passed by Node-RED
-        this.broker = n.broker;
-        this.port = n.port;
+        this.broker = config.broker;
+        this.port = config.port;
 
         // Config node state
         this.brokerurl = 'wss://' + this.broker + ':' + this.port + '/';
@@ -283,23 +283,23 @@ module.exports = function (RED) {
                                 break;
 
                             case 'kolibri.subscribe':
-                                for (n in p.params) {
+                                for (config in p.params) {
                                     if (
-                                        node.subscriptions.hasOwnProperty(n.path) &&
-                                        typeof node.subscriptions[n.path] === 'object'
+                                        node.subscriptions.hasOwnProperty(config.path) &&
+                                        typeof node.subscriptions[config.path] === 'object'
                                     ) {
-                                        node.subscriptions[n.path].subscribed = true;
+                                        node.subscriptions[config.path].subscribed = true;
                                     }
                                 }
                                 break;
 
                             case 'kolibri.unsubscribe':
-                                for (n in p.params) {
+                                for (config in p.params) {
                                     if (
-                                        node.subscriptions.hasOwnProperty(n.path) &&
-                                        typeof node.subscriptions[n.path] === 'object'
+                                        node.subscriptions.hasOwnProperty(config.path) &&
+                                        typeof node.subscriptions[config.path] === 'object'
                                     ) {
-                                        node.subscriptions[n.path].subscribed = false;
+                                        node.subscriptions[config.path].subscribed = false;
                                     }
                                 }
                                 break;
@@ -415,13 +415,13 @@ module.exports = function (RED) {
         }
     });
 
-    function KolibriInNode(n) {
+    function KolibriInNode(config) {
         // Create a RED node
-        RED.nodes.createNode(this, n);
+        RED.nodes.createNode(this, config);
 
         // Store local copies of the node configuration (as defined in the .html)
-        this.path = n.path;
-        this.broker = n.broker;
+        this.path = config.path;
+        this.broker = config.broker;
         this.brokerConn = RED.nodes.getNode(this.broker);
 
         // Copy "this" object in case we need it in context of callbacks of other functions.
@@ -474,13 +474,13 @@ module.exports = function (RED) {
 
     RED.nodes.registerType('kolibri in', KolibriInNode);
 
-    function KolibriOutNode(n) {
+    function KolibriOutNode(config) {
         // Create a RED node
-        RED.nodes.createNode(this, n);
+        RED.nodes.createNode(this, config);
 
         // Store local copies of the node configuration (as defined in the .html)
-        this.path = n.path;
-        this.broker = n.broker;
+        this.path = config.path;
+        this.broker = config.broker;
         this.brokerConn = RED.nodes.getNode(this.broker);
 
         // Copy "this" object in case we need it in context of callbacks of other functions.
