@@ -1,5 +1,5 @@
 const helper = require('node-red-node-test-helper');
-const kolibri = require('../kolibri.js').default;
+const kolibri = require('../kolibri.js');
 
 helper.init(require.resolve('node-red'));
 
