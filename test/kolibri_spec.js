@@ -1,3 +1,9 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) HMS Networks. All rights reserved.
+ *  Licensed under the Apache License, Version 2.0.
+ *  See License in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 const helper = require('node-red-node-test-helper');
 const kolibriIn = require('../nodes/kolibri-in.js');
 const kolibriOut = require('../nodes/kolibri-out.js');
