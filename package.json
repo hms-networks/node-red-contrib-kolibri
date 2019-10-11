@@ -27,6 +27,9 @@
     "broker",
     "messaging"
   ],
+  "dependencies": {
+    "ws": "^7.1.2"
+  },
   "devDependencies": {
     "node-red": "^1.0.1",
     "node-red-node-test-helper": "^0.2.3",
