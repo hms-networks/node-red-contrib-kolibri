@@ -1,5 +1,8 @@
 # Node Red Kolibri Nodes
-The repository contains two types of Node-Red nodes. Kolibri in and Kolibri out. Both nodes are able to connect to a running instance of the Kolibri Broker. 
+
+**Work in progress!** 
+
+Two types of Node-Red nodes. Kolibri in and Kolibri out. Both nodes are able to connect to a running instance of the Kolibri Broker. 
 
 ## Nodes Overview
 
@@ -11,12 +14,10 @@ This node you can publish to a specific data point path of the connected Kolibri
 
 ## Getting started
 
-#### Installation
-
+Add a node to a Node-Red flow. Edit the node configurations, deploy it.
 
 #### Node Configuration
-
-Add a node to a node red flow. Edit the node by double click on it. 
+ 
 On the edit page you can adjust three properties.
 
 - Kolibri Broker: Add or choose a Broker connection. New Broker connection requires the following properties.
@@ -27,4 +28,4 @@ On the edit page you can adjust three properties.
 - Data Point Path: Path to the data variable
 - Name: Node name, that is displayed in the flow
 
-After deploying the flow. The Nodes are trying to connect to the configured broker. If the connection is established sucessfully a green "connected" label is displayed. If the connection is closed a red "disconnected" is displayed.
+After deploying the flow. The Nodes are trying to connect to the configured broker. If the connection is established sucessfully a green "connected" label is displayed. If the connection is closed a red "disconnected" label is displayed.

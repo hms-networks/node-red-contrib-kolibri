@@ -19,8 +19,8 @@
     "test": "mocha \"test/**/*_spec.js\""
   },
   "keywords": [
-    "kolibri",
     "node-red",
+    "kolibri",
     "iot",
     "iiot",
     "internet of things",
