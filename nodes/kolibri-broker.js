@@ -120,7 +120,7 @@ module.exports = function (RED) {
                 this.consumer = new KolibriConsumer(this.brokerurl, this.options);
                 this.consumer.connect();
                 this.consumer.on('error', function (error) {
-                    this.log('Kolibri error: ' + error.message);
+                    node.log('Kolibri error: ' + error.message);
                 });
                 this.consumer.on('open', function () {
                     node.connecting = true;

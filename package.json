@@ -1,9 +1,12 @@
 {
   "name": "node-red-contrib-kolibri",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Node-Red nodes for connecting to a Kolibri Broker",
   "author": "HMS Networks",
-  "repository": "https://github.com/hms-networks/node-red-contrib-kolibri",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hms-networks/node-red-contrib-kolibri"
+  },
   "license": "Apache-2.0",
   "main": "none",
   "directories": {
@@ -29,11 +32,11 @@
     "messaging"
   ],
   "dependencies": {
-    "ws": "^7.1.2"
+    "ws": "^7.2.1"
   },
   "devDependencies": {
-    "node-red": "^1.0.1",
-    "node-red-node-test-helper": "^0.2.3",
+    "node-red": "^1.1.2",
+    "node-red-node-test-helper": "^0.2.5",
     "should": "^13.2.3"
   }
 }
