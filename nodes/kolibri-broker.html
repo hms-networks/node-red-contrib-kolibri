@@ -20,11 +20,27 @@
     </div>
     <div id="node-config-kolibri-broker-tabs-content" style="min-height: 170px;">
         <div id="kolibri-broker-tab-connection" style="display:none">
+            <label for="broker-border"></i> Kolibri Broker</label>
+            <div id="broker-border" style="border-style:solid; border-width:1px; padding:5px;">
             <div class="form-row node-input-broker">
                 <label for="node-config-input-broker"><i class="fa fa-globe"></i> Server</label>
                 <input class="input-append-left" type="text" id="node-config-input-broker" placeholder="PROJECT.com-tom.io" style="width: 50%;">
                 <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> Port</label>
                 <input type="text" id="node-config-input-port" placeholder="443" style="width:45px">
+            </div>
+        </div>
+            <label for="proxy-border"></i> Proxy</label>
+            <div style="border-style:solid; border-width:1px; padding:5px;">
+            <div class="form-row">
+                <label for="node-config-input-useProxy"><i class="fa fa-check"></i> Enable</label>
+                <input class="input-append-left" type="checkbox" id="node-config-input-useProxy" placeholder="false">
+            </div>
+                <div class="form-row">
+                    <label for="node-config-input-proxy-proxyHost"><i class="fa fa-globe"></i> Server</label>
+                    <input class="input-append-left" type="text" id="node-config-input-proxyHost" placeholder="" style="width: 50%;">
+                    <label for="node-config-input-proxyPort" style="margin-left: 10px; width: 35px; "> Port</label>
+                    <input type="text" id="node-config-input-proxyPort" placeholder="" style="width:45px">
+                </div>
             </div>
         </div>
         <div id="kolibri-broker-tab-security" style="display:none">
@@ -50,6 +66,9 @@
         defaults: {
             broker: { value: '', required: true, validate: RED.validators.regex(/^(([a-z0-9])|([a-z0-9][a-z0-9\-]{0,30}[a-z0-9]))(\.[a-z0-9\-]+)+(\.[a-z]{2,})$/i) },
             port: { value: 443, required: true, validate: RED.validators.number() },
+            useProxy: { value: false, required: false },
+            proxyHost: { value: "localhost", required: false },
+            proxyPort: { value: 8080, required: false, validate: RED.validators.number() }
         },
         credentials: {
             user: { type: 'text', required: true },

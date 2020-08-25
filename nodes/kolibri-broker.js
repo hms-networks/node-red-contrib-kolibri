@@ -43,6 +43,14 @@ module.exports = function (RED) {
                 rejectUnauthorized: false,
                 maxPayload: 1 * 1024 * 1024
             };
+
+            if(config.useProxy){
+                this.options.proxy = {
+                    host: config.proxyHost, 
+                   port: config.proxyPort
+                };
+            }
+
             // Define functions called by Kolibri in and out nodes
             let node = this;
             this.users = {};
