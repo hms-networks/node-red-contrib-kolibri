@@ -1,5 +1,7 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) HMS Networks. All rights reserved.
+ *  COPYRIGHT NOTIFICATION (c) 2014-2019 Beck IPC GmbH
+ *  COPYRIGHT NOTIFICATION (c) 2020 HMS Industrial Networks AB
+ * --------------------------------------------------------------------------------------------
  *  Licensed under the Apache License, Version 2.0.
  *  See License in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
