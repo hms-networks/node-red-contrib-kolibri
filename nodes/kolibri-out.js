@@ -2,7 +2,7 @@
  *  COPYRIGHT NOTIFICATION (c) 2020 HMS Industrial Networks AB
  * --------------------------------------------------------------------------------------------
  *  Licensed under the Apache License, Version 2.0.
- *  See License in the project root for license information.
+ *  See LICENSE.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 const tools = require('../lib/tools.js');

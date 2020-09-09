@@ -1,12 +1,10 @@
-<!--
-/*---------------------------------------------------------------------------------------------
- *  COPYRIGHT NOTIFICATION (c) 2014-2019 Beck IPC GmbH
- *  COPYRIGHT NOTIFICATION (c) 2020 HMS Industrial Networks AB
- * --------------------------------------------------------------------------------------------
- *  Licensed under the Apache License, Version 2.0.
- *  See License in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
--->
+<!--------------------------------------------------------------------------------------------
+   COPYRIGHT NOTIFICATION (c) 2014-2019 Beck IPC GmbH
+   COPYRIGHT NOTIFICATION (c) 2020 HMS Industrial Networks AB
+  --------------------------------------------------------------------------------------------
+   Licensed under the Apache License, Version 2.0.
+   See LICENSE.txt in the project root for license information.
+ -------------------------------------------------------------------------------------------->
 
 <!-- Kolibri input node -->
 
@@ -34,9 +32,9 @@
     <p>Outputs a message with the properties:</p>
     <ul>
         <li><code>msg.payload</code>
-            <p>Is the value of the variables to transmit itself. Default is false, 0 or empty string</p></li>
+            <p>Is the value of the variables to transmit itself</p></li>
         <li><code>msg.quality</code>
-            <p>Indicates the reliability of the current value as a 8-bit unsigned integer value. Possible qualities are:
+            <p>Indicates the reliability of the current value as number. Possible qualities are:
                 0: Unknown -- Default 
                 1: Valid
                 2: Simulated -- The value is not a real field, but a simulated value
@@ -49,7 +47,7 @@
         <li><code>msg.timestamp</code>
             <p>The current unix timestamp in seconds</p></li></li>
         <li><code>msg.path</code>
-            <p>The data point path to subscribe to. Represents an identifiers.</p></li></li>
+            <p>The data point path to subscribe to</p></li></li>
     </ul>
 </script>
 
