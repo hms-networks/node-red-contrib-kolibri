@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) HMS Networks. All rights reserved.
+ *  COPYRIGHT NOTIFICATION (c) 2020 HMS Industrial Networks AB
+ * --------------------------------------------------------------------------------------------
  *  Licensed under the Apache License, Version 2.0.
- *  See License in the project root for license information.
+ *  See LICENSE.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 module.exports = function (RED) {
@@ -14,10 +15,13 @@ module.exports = function (RED) {
         constructor(config) {
             RED.nodes.createNode(this, config);
             // Configuration options passed by Node-RED
+            this.name = config.name;
             this.broker = config.broker;
             this.port = config.port;
+
             // Config node state
             this.brokerurl = 'wss://' + this.broker + ':' + this.port + '/';
+            this.consumer = null;
             this.connected = false;
             this.connecting = false;
             this.closing = false;
@@ -26,19 +30,20 @@ module.exports = function (RED) {
             this.user = this.credentials.user;
             this.password = this.credentials.password;
             this.project = '';
+
             let splits = this.broker.split('.');
             if (typeof splits[0] === 'string' && splits[0].length > 0) {
                 this.project = splits[0];
             }
-            // Options for passing to the Kolibri.js API
+
+            // Options for passing to KolibriConsumer
             this.options = {
-                connectRetries: 100,
-                connectMinRetryInterval: 2,
-                connectMaxRetryInterval: 60,
-                keepaliveInterval: 60,
-                keepaliveTimeout: 30,
-                requestTimeout: 30,
-                requestRetries: 2,
+                connectMinRetryInterval: 1,
+                connectMaxRetryInterval: 15,
+                keepaliveInterval: 15,
+                keepaliveTimeout: 5,
+                requestTimeout: 5,
+                requestRetries: 1,
                 ca: [],
                 rejectUnauthorized: false,
                 maxPayload: 1 * 1024 * 1024
@@ -50,107 +55,105 @@ module.exports = function (RED) {
                    port: config.proxyPort
                 };
             }
+            let self = this;
 
             // Define functions called by Kolibri in and out nodes
-            let node = this;
-            this.users = {};
+            this.nodes = {};
 
             this.retry = {
-                interval: node.options.connectMinRetryInterval,
-                retries: node.options.connectRetries,
+                interval: this.options.connectMinRetryInterval,
                 handler: null,
                 resetInterval: function () {
                     if (this.handler) {
                         clearTimeout(this.handler);
                         this.handler = null;
                     }
-                    this.interval = node.options.connectMinRetryInterval;
-                    this.retries = node.options.connectRetries;
+                    this.interval = self.options.connectMinRetryInterval;
                 },
                 updateInterval: function () {
                     this.interval *= 2;
-                    if (this.interval > node.options.connectMaxRetryInterval) {
-                        this.interval = node.options.connectMaxRetryInterval;
+                    if (this.interval > self.options.connectMaxRetryInterval) {
+                        this.interval = self.options.connectMaxRetryInterval;
                     }
-                },
-                resetRetries: function () {
-                    this.retries = node.options.connectRetries;
                 }
             };
 
-            // subscribe to closing node event of Node-Red
+            // Subscribe to closing node event of Node-RED
             this.on('close', (done) => {
                 this.closing = true;
-                if (this.connected) {
-                    this.client.once('close', function () {
-                        done();
-                    });
-                    this.client.end();
-                }
-                else if (this.connecting) {
-                    node.client.end();
-                    done();
-                }
-                else {
+
+                if (typeof done === 'function') {
                     done();
                 }
             });
         }
 
-        register(kolibriNode) {
-            this.users[kolibriNode.id] = kolibriNode;
-            if (Object.keys(this.users).length === 1) {
+        register(node) {
+            this.nodes[node.id] = node;
+            // Establish the Broker connection when the first node is registered
+            if (Object.keys(this.nodes).length === 1) {
                 this.connect();
             }
         }
 
-        deregister(kolibriNode, done) {
-            delete this.users[kolibriNode.id];
-            if (this.closing) {
-                return done();
+        deregister(node, done) {
+            delete this.nodes[node.id];
+            // Close the Broker connection when the last node is deregistered
+            if (Object.keys(this.nodes).length === 0) {
+                this.disconnect();
             }
-            if (Object.keys(this.users).length === 0) {
-                if (this.client && this.client.connected) {
-                    return this.client.end(done);
-                }
-                else {
-                    this.client.end();
-                    return done();
-                }
+        }
+
+        disconnect() {
+            if (this.connected) {
+                this.log('Closing connection');
+                this.connected = false;
+                this.connecting = false;
+                this.consumer.disconnect();
             }
-            done();
         }
 
         connect() {
+            let self = this;
             if (!this.connected && !this.connecting) {
-                let node = this;
+                this.log('Connecting');
                 this.connecting = true;
                 this.consumer = new KolibriConsumer(this.brokerurl, this.options);
-                this.consumer.connect();
+
                 this.consumer.on('error', function (error) {
-                    node.log('Kolibri error: ' + error.message);
+                    self.error('Connection error: ' + error.message);
+
+                    if (!self.connected && !self.connecting) {
+                        // Reconnect again
+                        self.retry.handler = setTimeout(() => {
+                            self.connect();
+                            self.retry.updateInterval();
+                        }, self.retry.interval * 1000);
+                    }
                 });
+
                 this.consumer.on('open', function () {
-                    node.connecting = true;
-                    for (let id in node.users) {
-                        if (node.users.hasOwnProperty(id)) {
-                            node.users[id].status({
+                    self.connecting = true;
+                    for (let id in self.nodes) {
+                        if (self.nodes.hasOwnProperty(id)) {
+                            self.nodes[id].status({
                                 fill: 'yellow',
                                 shape: 'ring',
                                 text: 'node-red:common.status.connecting'
                             });
                         }
                     }
-                    // Send getChallenge request
                     this.sendRpcRequestRetry('kolibri.getChallenge', {});
                 });
-                this.consumer.on('close', function (code, message) {
-                    if (node.connected) {
-                        node.connected = false;
-                        node.log('Kolibri: Disconnected with code=' + code);
-                        for (let id in node.users) {
-                            if (node.users.hasOwnProperty(id)) {
-                                node.users[id].status({
+
+                this.consumer.on('close', function (code) {
+                    if (self.connected || self.connecting) {
+                        self.connected = false;
+                        self.connecting = false;
+                        self.log('Connection closed with code = ' + code);
+                        for (let id in self.nodes) {
+                            if (self.nodes.hasOwnProperty(id)) {
+                                self.nodes[id].status({
                                     fill: 'red',
                                     shape: 'ring',
                                     text: 'node-red:common.status.disconnected'
@@ -158,21 +161,15 @@ module.exports = function (RED) {
                             }
                         }
                     }
-                    else {
-                        node.log('Kolibri: connect failed');
-                    }
-                    if (node.retry.retries > 0) {
-                        // Reconnect
-                        node.log('Kolibri: Trying to reconnect in ' + node.retry.interval + ' s');
-                        setTimeout(() => {
-                            node.connect();
-                            node.retry.retries--;
-                        }, node.retry.interval * 1000);
-                    }
-                    else {
-                        node.log('Kolibri: Timeout');
+                    if (!self.connecting && !self.closing) {
+                        // Reconnect again after retry interval
+                        self.retry.handler = setTimeout(() => {
+                            self.connect();
+                            self.retry.updateInterval();
+                        }, self.retry.interval * 1000);
                     }
                 });
+
                 this.consumer.on('rpc-request', function (rpc) {
                     switch (rpc.method) {
                         case 'kolibri.getRpcInfo':
@@ -187,37 +184,43 @@ module.exports = function (RED) {
                             this.sendRpcResult(rpc.id, result);
                             break;
                         case 'kolibri.write':
-                            rpc.params.nodes.forEach(function (nn) {
-                                if (node.subscriptions.hasOwnProperty(nn.path) &&
-                                    typeof node.subscriptions[nn.path] === 'object' &&
-                                    node.subscriptions[nn.path].hasOwnProperty('handler')) {
-                                    node.subscriptions[nn.path].handler(
-                                        nn.path,
-                                        nn.timestamp,
-                                        nn.timestamp_broker,
-                                        nn.quality,
-                                        nn.value
-                                    );
+                            rpc.params.nodes.forEach(function (n) {
+                                if (self.subscriptions.hasOwnProperty(n.path) &&
+                                    typeof self.subscriptions[n.path] === 'object' &&
+                                    self.subscriptions[n.path].hasOwnProperty('handler')) {
+                                        self.subscriptions[n.path].handler(
+                                            n.path,
+                                            n.timestamp,
+                                            n.quality,
+                                            n.value
+                                        );
                                 }
                             });
                             this.sendRpcResult(rpc.id, 0);
                             break;
                         case 'kolibri.unsubscribed':
-                            for (let nn in rpc.params) {
-                                if (node.subscriptions.hasOwnProperty(nn.path) &&
-                                    typeof node.subscriptions[nn.path] === 'object') {
-                                    node.subscriptions[nn.path].subscribe = nn.subscribe;
-                                    node.subscriptions[nn.path].subscribed = false;
-                                }
-                                if (node.connected &&
-                                    node.subscriptions.hasOwnProperty(nn.path) &&
-                                    node.subscriptions[nn.path].hasOwnProperty('subscribe') &&
-                                    node.subscriptions[nn.path].subscribe) {
-                                    this.sendRpcRequestRetry('kolibri.subscribe', [
-                                        { path: nn.path }
-                                    ]);
-                                }
-                            }
+                            rpc.params.forEach(function (n) {
+                                if (self.subscriptions.hasOwnProperty(n.path) &&
+                                    typeof self.subscriptions[n.path] === 'object') {
+                                        if (n.subscribe) {
+                                            self.subscriptions[n.path].subscribed = false;
+                                            self.consumer.sendRpcRequestRetry('kolibri.subscribe', [
+                                                { path: n.path }
+                                            ]);
+                                        } else {
+                                            delete self.subscriptions[n.path];
+                                            for (let id in self.nodes) {
+                                                if (self.nodes.hasOwnProperty(id)) {
+                                                    self.nodes[id].status({
+                                                        fill: 'red',
+                                                        shape: 'ring',
+                                                        text: 'invalid path'
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                            });
                             this.sendRpcResult(rpc.id, 0);
                             break;
                         default:
@@ -225,105 +228,153 @@ module.exports = function (RED) {
                             break;
                     }
                 });
+
                 this.consumer.on('rpc-result', function (rpc) {
                     let p = this.pending.getRequest(rpc.id);
                     if (p) {
                         switch (p.method) {
                             case 'kolibri.getChallenge':
                                 let pwHash = tools.hashPassword([
-                                    node.password,
-                                    node.user.toLowerCase(),
-                                    node.project.toLowerCase()
+                                    self.password,
+                                    self.user.toLowerCase(),
+                                    self.project.toLowerCase()
                                 ], rpc.result);
                                 // Send login request
                                 this.sendRpcRequestRetry('kolibri.login', {
                                     version: 0,
-                                    user: node.user,
+                                    user: self.user,
                                     password: pwHash.toString('hex'),
-                                    interval: node.options.keepaliveInterval,
-                                    timeout: node.options.keepaliveTimeout,
+                                    interval: self.options.keepaliveInterval,
+                                    timeout: self.options.keepaliveTimeout,
                                     pendingTransactions: false
                                 });
+                                self.log('Logging in');
                                 break;
                             case 'kolibri.login':
-                                node.connecting = false;
-                                node.connected = true;
-                                node.log('Kolibri: connected');
-                                for (let id in node.users) {
-                                    if (node.users.hasOwnProperty(id)) {
-                                        node.users[id].status({
+                                self.connecting = false;
+                                self.connected = true;
+                                self.log('Logged in');
+                                // Successful login, reset connection retry interval
+                                self.retry.resetInterval();
+
+                                for (let id in self.nodes) {
+                                    if (self.nodes.hasOwnProperty(id)) {
+                                        self.nodes[id].status({
                                             fill: 'green',
                                             shape: 'dot',
                                             text: 'node-red:common.status.connected'
                                         });
                                     }
                                 }
-                                // Successful login, reset retry interval and retries
-                                node.retry.resetInterval();
-                                node.retry.resetRetries();
                                 // Re-subscribe to stored data points
-                                let nodes = [];
-                                for (let s in node.subscriptions) {
-                                    if (node.subscriptions.hasOwnProperty(s) &&
-                                        typeof node.subscriptions[s] === 'object' &&
-                                        node.subscriptions[s].hasOwnProperty('subscribe') &&
-                                        node.subscriptions[s].subscribe) {
-                                        nodes.push({ path: s });
+                                for (let s in self.subscriptions) {
+                                    if (self.subscriptions.hasOwnProperty(s) &&
+                                        typeof self.subscriptions[s] === 'object') {
+                                            this.sendRpcRequestRetry('kolibri.subscribe', [{path: s}]);
                                     }
                                 }
-                                if (nodes.length > 0) {
-                                    this.sendRpcRequestRetry('kolibri.subscribe', nodes);
-                                }
-                                break;
-                            case 'kolibri.write':
                                 break;
                             case 'kolibri.subscribe':
-                                for (let config in p.params) {
-                                    if (node.subscriptions.hasOwnProperty(config.path) &&
-                                        typeof node.subscriptions[config.path] === 'object') {
-                                        node.subscriptions[config.path].subscribed = true;
+                                for (let n in p.params) {
+                                    if (self.subscriptions.hasOwnProperty(n.path) &&
+                                        typeof self.subscriptions[n.path] === 'object') {
+                                        self.subscriptions[n.path].subscribed = true;
                                     }
                                 }
                                 break;
                             case 'kolibri.unsubscribe':
-                                for (let config in p.params) {
-                                    if (node.subscriptions.hasOwnProperty(config.path) &&
-                                        typeof node.subscriptions[config.path] === 'object') {
-                                        node.subscriptions[config.path].subscribed = false;
+                                for (let n in p.params) {
+                                    if (self.subscriptions.hasOwnProperty(n.path) &&
+                                        typeof self.subscriptions[n.path] === 'object') {
+                                        self.subscriptions[n.path].subscribed = false;
                                     }
                                 }
                                 break;
+                            case 'kolibri.write':
+                                break;
+                            case 'kolibri.close':
+                                break;
                             default:
-                                node.log('Kolibri: received RPC result: ' + rpc.result);
+                                self.warn('Missing result handler: ' + rpc);
                                 break;
                         }
                         // Delete pending RPC
                         this.pending.deleteRequest(rpc.id);
                     }
                     else {
-                        node.log('Kolibri: received unsolicited result: ' + rpc);
+                        self.warn('Received unsolicited result: ' + rpc);
                     }
                 });
+
                 this.consumer.on('rpc-error', function (rpc) {
+                    let invalidPath;
                     let p = this.pending.getRequest(rpc.id);
                     if (p) {
                         switch (p.method) {
                             case 'kolibri.login':
-                                node.log('Kolibri: login failed: ' + rpc.error);
-                                node.log('Kolibri: closing connection');
-                                this.close();
+                                self.error('Login failed: ' + rpc.error.message);
+                                self.connected = false;
+                                self.connecting = false;
+                                if (rpc.error.message === 'access denied') {
+                                    rpc.error.message = 'invalid broker settings';
+                                }
+                                for (let id in self.nodes) {
+                                    if (self.nodes.hasOwnProperty(id)) {
+                                        self.nodes[id].status({
+                                            fill: 'red',
+                                            shape: 'ring',
+                                            text: rpc.error.message
+                                        });
+                                    }
+                                }
+                                break;
+                            case 'kolibri.subscribe':
+                                invalidPath = p.params[0].path;
+                                self.error('Subscription failed: ' + rpc.error.message + ' ' + invalidPath);
+
+                                // Change status for node
+                                for (let id in self.nodes) {
+                                    if (self.nodes.hasOwnProperty(id)) {
+                                        if (self.nodes[id].path === invalidPath){
+                                            self.nodes[id].status({
+                                                fill: 'yellow',
+                                                shape: 'ring',
+                                                text: rpc.error.message
+                                            });
+                                        }
+                                    }
+                                }
+                                break;
+                            case 'kolibri.write':
+                                invalidPath = p.params.nodes[0].path;
+                                self.error('Write failed: ' + rpc.error.message + ' ' + invalidPath);
+
+                                for (let id in self.nodes) {
+                                    if (self.nodes.hasOwnProperty(id)) {
+                                        if (self.nodes[id].path === invalidPath){
+                                            self.nodes[id].status({
+                                                fill: 'yellow',
+                                                shape: 'ring',
+                                                text: rpc.error.message
+                                            });
+                                        }
+                                    }
+                                }
                                 break;
                             default:
-                                node.log('Kolibri: received RPC error: ' + rpc.error.message);
+                                self.warn('Missing error handler: ' + rpc);
                                 break;
                         }
                         // Delete pending RPC
                         this.pending.deleteRequest(rpc.id);
                     }
                     else {
-                        node.log('Kolibri: received unsolicited error: ' + rpc);
+                        self.warn('Received unsolicited error: ' + rpc);
                     }
                 });
+
+                // And finally establish the Kolibri Broker connection
+                this.consumer.connect();
             }
         }
 
@@ -331,17 +382,13 @@ module.exports = function (RED) {
             if (!this.subscriptions.hasOwnProperty(path) ||
                 typeof this.subscriptions[path] !== 'object') {
                 this.subscriptions[path] = {
-                    subscribe: true,
                     subscribed: false,
-                    handler: function (mpath, mts, mtsb, mqual, mval) {
+                    handler: function (mpath, mts, mqual, mval) {
                         if (mpath === path) {
-                            callback(mpath, mts, mtsb, mqual, mval);
+                            callback(mpath, mts, mqual, mval);
                         }
                     }
                 };
-            }
-            else {
-                this.subscriptions[path].subscribe = true;
             }
             if (this.connected && !this.subscriptions[path].subscribed) {
                 this.sendRpcRequestRetry('kolibri.subscribe', [{ path: path }]);
@@ -352,12 +399,8 @@ module.exports = function (RED) {
             if (!this.subscriptions.hasOwnProperty(path) ||
                 typeof this.subscriptions[path] !== 'object') {
                 this.subscriptions[path] = {
-                    subscribe: false,
                     subscribed: false
                 };
-            }
-            else {
-                this.subscriptions[path].subscribe = false;
             }
             if (this.connected && this.subscriptions[path].subscribed) {
                 this.sendRpcRequestRetry('kolibri.unsubscribe', [{ path: path }]);
