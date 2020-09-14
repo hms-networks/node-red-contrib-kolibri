@@ -1,28 +1,4 @@
-{
-  "_from": "node-red-contrib-kolibri@0.2.2",
-  "_id": "node-red-contrib-kolibri@0.2.2",
-  "_inBundle": false,
-  "_integrity": "sha512-zggC0pTy+j36lP8u20WijR/PLxMo70Rze9tFwxHXBmnDDL3ypLflHK09jlmcX0QuxOeKFRfteGDzA9/ExJSOsg==",
-  "_location": "/node-red-contrib-kolibri",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "node-red-contrib-kolibri@0.2.2",
-    "name": "node-red-contrib-kolibri",
-    "escapedName": "node-red-contrib-kolibri",
-    "rawSpec": "0.2.2",
-    "saveSpec": null,
-    "fetchSpec": "0.2.2"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/node-red-contrib-kolibri/-/node-red-contrib-kolibri-0.2.2.tgz",
-  "_shasum": "a59ba470e9b4edefccfbfebf864de5ce27c6f926",
-  "_spec": "node-red-contrib-kolibri@0.2.2",
-  "_where": "c:\\Work\\Kolibri\\node-red",
+{  
   "author": {
     "name": "HMS Networks"
   },
