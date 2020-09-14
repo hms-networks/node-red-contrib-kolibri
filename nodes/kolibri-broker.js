@@ -49,10 +49,10 @@ module.exports = function (RED) {
                 maxPayload: 1 * 1024 * 1024
             };
 
-            if(config.useProxy){
+            if (config.useProxy) {
                 this.options.proxy = {
-                    host: config.proxyHost, 
-                   port: config.proxyPort
+                    host: config.proxyHost,
+                    port: config.proxyPort
                 };
             }
             let self = this;
@@ -188,12 +188,12 @@ module.exports = function (RED) {
                                 if (self.subscriptions.hasOwnProperty(n.path) &&
                                     typeof self.subscriptions[n.path] === 'object' &&
                                     self.subscriptions[n.path].hasOwnProperty('handler')) {
-                                        self.subscriptions[n.path].handler(
-                                            n.path,
-                                            n.timestamp,
-                                            n.quality,
-                                            n.value
-                                        );
+                                    self.subscriptions[n.path].handler(
+                                        n.path,
+                                        n.timestamp,
+                                        n.quality,
+                                        n.value
+                                    );
                                 }
                             });
                             this.sendRpcResult(rpc.id, 0);
@@ -202,24 +202,25 @@ module.exports = function (RED) {
                             rpc.params.forEach(function (n) {
                                 if (self.subscriptions.hasOwnProperty(n.path) &&
                                     typeof self.subscriptions[n.path] === 'object') {
-                                        if (n.subscribe) {
-                                            self.subscriptions[n.path].subscribed = false;
-                                            self.consumer.sendRpcRequestRetry('kolibri.subscribe', [
-                                                { path: n.path }
-                                            ]);
-                                        } else {
-                                            delete self.subscriptions[n.path];
-                                            for (let id in self.nodes) {
-                                                if (self.nodes.hasOwnProperty(id)) {
-                                                    self.nodes[id].status({
-                                                        fill: 'red',
-                                                        shape: 'ring',
-                                                        text: 'invalid path'
-                                                    });
-                                                }
+                                    if (n.subscribe) {
+                                        self.subscriptions[n.path].subscribed = false;
+                                        self.consumer.sendRpcRequestRetry('kolibri.subscribe', [
+                                            { path: n.path }
+                                        ]);
+                                    }
+                                    else {
+                                        delete self.subscriptions[n.path];
+                                        for (let id in self.nodes) {
+                                            if (self.nodes.hasOwnProperty(id)) {
+                                                self.nodes[id].status({
+                                                    fill: 'red',
+                                                    shape: 'ring',
+                                                    text: 'invalid path'
+                                                });
                                             }
                                         }
                                     }
+                                }
                             });
                             this.sendRpcResult(rpc.id, 0);
                             break;
@@ -270,7 +271,7 @@ module.exports = function (RED) {
                                 for (let s in self.subscriptions) {
                                     if (self.subscriptions.hasOwnProperty(s) &&
                                         typeof self.subscriptions[s] === 'object') {
-                                            this.sendRpcRequestRetry('kolibri.subscribe', [{path: s}]);
+                                        this.sendRpcRequestRetry('kolibri.subscribe', [{path: s}]);
                                     }
                                 }
                                 break;
@@ -330,12 +331,13 @@ module.exports = function (RED) {
                                 break;
                             case 'kolibri.subscribe':
                                 invalidPath = p.params[0].path;
-                                self.error('Subscription failed: ' + rpc.error.message + ' ' + invalidPath);
+                                self.error('Subscription failed: ' +
+                                 rpc.error.message + ' ' + invalidPath);
 
                                 // Change status for node
                                 for (let id in self.nodes) {
                                     if (self.nodes.hasOwnProperty(id)) {
-                                        if (self.nodes[id].path === invalidPath){
+                                        if (self.nodes[id].path === invalidPath) {
                                             self.nodes[id].status({
                                                 fill: 'yellow',
                                                 shape: 'ring',
@@ -347,11 +349,12 @@ module.exports = function (RED) {
                                 break;
                             case 'kolibri.write':
                                 invalidPath = p.params.nodes[0].path;
-                                self.error('Write failed: ' + rpc.error.message + ' ' + invalidPath);
+                                self.error('Write failed: ' + rpc.error.message +
+                                 ' ' + invalidPath);
 
                                 for (let id in self.nodes) {
                                     if (self.nodes.hasOwnProperty(id)) {
-                                        if (self.nodes[id].path === invalidPath){
+                                        if (self.nodes[id].path === invalidPath) {
                                             self.nodes[id].status({
                                                 fill: 'yellow',
                                                 shape: 'ring',

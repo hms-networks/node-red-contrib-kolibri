@@ -12,7 +12,7 @@ module.exports = function (RED) {
         constructor(config) {
             // Create a RED node
             RED.nodes.createNode(this, config);
-            
+
             // Copy "this" object in case we need it in context of callbacks of other functions.
             let self = this;
 
@@ -51,7 +51,7 @@ module.exports = function (RED) {
                                 quality: msg.quality || 1
                             };
                             self.brokerConn.write(ps);
-                        } 
+                        }
                         else {
                             self.error('Kolibri: path not defined for node ' + self.name);
                         }
@@ -70,7 +70,6 @@ module.exports = function (RED) {
                     }
                     done();
                 });
-                
             }
             else {
                 self.error('Kolibri: missing broker configuration');
