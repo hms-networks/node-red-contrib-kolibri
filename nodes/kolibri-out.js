@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) HMS Networks. All rights reserved.
+ *  COPYRIGHT NOTIFICATION (c) 2020 HMS Industrial Networks AB
+ * --------------------------------------------------------------------------------------------
  *  Licensed under the Apache License, Version 2.0.
- *  See License in the project root for license information.
+ *  See LICENSE.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 const tools = require('../lib/tools.js');
@@ -11,40 +12,68 @@ module.exports = function (RED) {
         constructor(config) {
             // Create a RED node
             RED.nodes.createNode(this, config);
-            // Store local copies of the node configuration (as defined in the .html)
-            this.path = config.path;
-            this.broker = config.broker;
-            this.brokerConn = RED.nodes.getNode(this.broker);
+            
             // Copy "this" object in case we need it in context of callbacks of other functions.
-            let node = this;
-            if (this.brokerConn) {
-                this.status({
-                    fill: 'red',
-                    shape: 'ring',
-                    text: 'node-red:common.status.disconnected'
-                });
-                // Respond to inputs....
-                this.on('input', function (msg) {
-                    if (this.brokerConn.connected) {
-                        node.status({
-                            fill: 'green',
-                            shape: 'dot',
-                            text: 'node-red:common.status.connected'
-                        });
+            let self = this;
+
+            // Store local copies of the node configuration (as defined in the .html)
+            self.path = config.path;
+            self.broker = config.broker;
+            self.brokerConn = RED.nodes.getNode(self.broker);
+
+            self.status({
+                fill: 'red',
+                shape: 'ring',
+                text: 'node-red:common.status.disconnected'
+            });
+
+            if (self.brokerConn) {
+                if (self.path) {
+                    self.brokerConn.register(self);
+                    self.status({
+                        fill: 'green',
+                        shape: 'dot',
+                        text: 'node-red:common.status.connected'
+                    });
+                }
+                else {
+                    self.error('Kolibri: path not defined for node ' + self.name);
+                }
+
+                // Respond to inputs...
+                self.on('input', function (msg) {
+                    if (self.brokerConn.connected) {
+                        if (self.path) {
+                            let ps = {
+                                path: self.path,
+                                value: msg.payload,
+                                timestamp: msg.timestamp || tools.currentTimestamp(),
+                                quality: msg.quality || 1
+                            };
+                            self.brokerConn.write(ps);
+                        } 
+                        else {
+                            self.error('Kolibri: path not defined for node ' + self.name);
+                        }
                     }
-                    let ps = {
-                        path: node.path,
-                        value: msg.payload
-                    };
-                    ps.timestamp = msg.timestamp || tools.currentTimestamp();
-                    ps.quality = msg.quality || 1;
-                    node.brokerConn.write(ps);
                 });
-                this.on('close', function () {
-                    // Called when the node is shutdown - eg on redeploy.
-                    // Allows ports to be closed, connections dropped etc.
-                    // eg: node.client.disconnect();
+
+                self.on('close', (done) => {
+                    if (self.brokerConn) {
+                        self.status({
+                            fill: 'red',
+                            shape: 'ring',
+                            text: 'node-red:common.status.disconnected'
+                        });
+                        self.brokerConn.unsubscribe(self.path);
+                        self.brokerConn.deregister(self, done);
+                    }
+                    done();
                 });
+                
+            }
+            else {
+                self.error('Kolibri: missing broker configuration');
             }
         }
     }

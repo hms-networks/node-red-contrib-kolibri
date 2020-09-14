@@ -1,27 +1,25 @@
-{
-  "name": "node-red-contrib-kolibri",
-  "version": "0.2.2",
-  "description": "Node-Red nodes for connecting to a Kolibri Broker",
-  "author": "HMS Networks",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hms-networks/node-red-contrib-kolibri"
+{  
+  "author": {
+    "name": "HMS Networks"
   },
-  "license": "Apache-2.0",
-  "main": "none",
+  "bugs": {
+    "url": "https://github.com/hms-networks/node-red-contrib-kolibri/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "ws": "^7.2.1"
+  },
+  "deprecated": false,
+  "description": "Node-RED nodes for connecting to a Kolibri Broker (e.g. HMS Hub)",
+  "devDependencies": {
+    "node-red": "^1.1.2",
+    "node-red-node-test-helper": "^0.2.5",
+    "should": "^13.2.3"
+  },
   "directories": {
     "lib": "lib"
   },
-  "node-red": {
-    "nodes": {
-      "kolibri-broker": "nodes/kolibri-broker.js",
-      "kolibri-in": "nodes/kolibri-in.js",
-      "kolibri-out": "nodes/kolibri-out.js"
-    }
-  },
-  "scripts": {
-    "test": "mocha \"test/**/*_spec.js\""
-  },
+  "homepage": "https://github.com/hms-networks/node-red-contrib-kolibri#readme",
   "keywords": [
     "node-red",
     "kolibri",
@@ -29,14 +27,26 @@
     "iiot",
     "internet of things",
     "broker",
-    "messaging"
+    "messaging",
+    "hms",
+    "hub"
   ],
-  "dependencies": {
-    "ws": "^7.2.1"
+  "license": "Apache-2.0",
+  "main": "none",
+  "name": "node-red-contrib-kolibri",
+  "node-red": {
+    "nodes": {
+      "kolibri-broker": "nodes/kolibri-broker.js",
+      "kolibri-in": "nodes/kolibri-in.js",
+      "kolibri-out": "nodes/kolibri-out.js"
+    }
   },
-  "devDependencies": {
-    "node-red": "^1.1.2",
-    "node-red-node-test-helper": "^0.2.5",
-    "should": "^13.2.3"
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hms-networks/node-red-contrib-kolibri.git"
+  },
+  "scripts": {
+    "test": "mocha \"test/**/*_spec.js\""
+  },
+  "version": "0.3.0"
 }
