@@ -12,66 +12,68 @@ module.exports = function (RED) {
         constructor(config) {
             // Create a RED node
             RED.nodes.createNode(this, config);
-            // Store local copies of the node configuration (as defined in the .html)
-            this.path = config.path;
-            this.broker = config.broker;
-            this.brokerConn = RED.nodes.getNode(this.broker);
+            
             // Copy "this" object in case we need it in context of callbacks of other functions.
-            let node = this;
-            this.status({
+            let self = this;
+
+            // Store local copies of the node configuration (as defined in the .html)
+            self.path = config.path;
+            self.broker = config.broker;
+            self.brokerConn = RED.nodes.getNode(self.broker);
+
+            self.status({
                 fill: 'red',
                 shape: 'ring',
                 text: 'node-red:common.status.disconnected'
             });
 
-            if (this.brokerConn) {
-                if (this.path) {
-                    node.brokerConn.register(this);
-                    node.status({
+            if (self.brokerConn) {
+                if (self.path) {
+                    self.brokerConn.register(self);
+                    self.status({
                         fill: 'green',
                         shape: 'dot',
                         text: 'node-red:common.status.connected'
                     });
                 }
                 else {
-                    this.error('Kolibri: path not defined for ID ' + this.node.id);
+                    self.error('Kolibri: path not defined for node ' + self.name);
                 }
 
-                // Respond to inputs....
-                this.on('input', function (msg) {
-                    if (this.brokerConn.connected) {
-                        if (this.path) {
+                // Respond to inputs...
+                self.on('input', function (msg) {
+                    if (self.brokerConn.connected) {
+                        if (self.path) {
                             let ps = {
-                                path: node.path,
+                                path: self.path,
                                 value: msg.payload,
                                 timestamp: msg.timestamp || tools.currentTimestamp(),
                                 quality: msg.quality || 1
                             };
-                            node.brokerConn.write(ps);
+                            self.brokerConn.write(ps);
                         } 
                         else {
-                            this.error('Kolibri: path not defined');
+                            self.error('Kolibri: path not defined for node ' + self.name);
                         }
                     }
                 });
 
-                this.on('close', (done) => {
-                    if (node.brokerConn) {
-                        node.brokerConn.unsubscribe(node.path);
-                        node.brokerConn.deregister(node, done);
-                        node.brokerConn.disconnect(node.id);
-                        this.status({
+                self.on('close', (done) => {
+                    if (self.brokerConn) {
+                        self.status({
                             fill: 'red',
                             shape: 'ring',
                             text: 'node-red:common.status.disconnected'
                         });
+                        self.brokerConn.unsubscribe(self.path);
+                        self.brokerConn.deregister(self, done);
                     }
                     done();
                 });
                 
             }
             else {
-                this.error('Kolibri: missing broker configuration');
+                self.error('Kolibri: missing broker configuration');
             }
         }
     }

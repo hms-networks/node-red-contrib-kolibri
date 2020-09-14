@@ -10,33 +10,35 @@ module.exports = function (RED) {
         constructor(config) {
             // Create a RED node
             RED.nodes.createNode(this, config);
-            // Store local copies of the node configuration (as defined in the .html)
-            this.path = config.path;
-            this.broker = config.broker;
-            this.brokerConn = RED.nodes.getNode(this.broker);
-            // Copy "this" object in case we need it in context of callbacks of other functions.
-            let node = this;
 
-            this.status({
+            // Copy "this" object in case we need it in context of callbacks of other functions.
+            let self = this;
+
+            // Store local copies of the node configuration (as defined in the .html)
+            self.path = config.path;
+            self.broker = config.broker;
+            self.brokerConn = RED.nodes.getNode(self.broker);
+
+            self.status({
                 fill: 'red',
                 shape: 'ring',
                 text: 'node-red:common.status.disconnected'
             });
 
-            if (this.brokerConn) {
-                if (this.path) {
-                    node.brokerConn.register(this);
-                    this.brokerConn.subscribe(this.path, function (path, ts, qual, value) {
+            if (self.brokerConn) {
+                if (self.path) {
+                    self.brokerConn.register(self);
+                    self.brokerConn.subscribe(self.path, function (path, ts, qual, value) {
                         let msg = {
                             path: path,
                             timestamp: ts,
                             quality: qual,
                             payload: value
                         };
-                        node.send(msg);
+                        self.send(msg);
                     });
-                    if (this.brokerConn.connected) {
-                        node.status({
+                    if (self.brokerConn.connected) {
+                        self.status({
                             fill: 'green',
                             shape: 'dot',
                             text: 'node-red:common.status.connected'
@@ -44,27 +46,25 @@ module.exports = function (RED) {
                     }
                 }
                 else {
-                    this.error('Kolibri: path not defined');
+                    self.error('Kolibri: path not defined for node ' + self.name);
                 }
 
-                this.on('close', (done) => {
-                    if (node.brokerConn) {
-                        node.brokerConn.unsubscribe(node.path);
-                        node.brokerConn.deregister(node, done);
-                        node.brokerConn.disconnect(node.id);
-                        this.status({
+                self.on('close', (done) => {
+                    if (self.brokerConn) {
+                        self.status({
                             fill: 'red',
                             shape: 'ring',
                             text: 'node-red:common.status.disconnected'
                         });
+                        self.brokerConn.unsubscribe(self.path);
+                        self.brokerConn.deregister(self, done);
                     }
                     done();
                 });
 
-
             }
             else {
-                this.error('Kolibri: missing broker configuration');
+                self.error('Kolibri: missing broker configuration');
             }
         }
     }
