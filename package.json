@@ -1,24 +1,9 @@
 {  
-  "author": {
-    "name": "HMS Networks"
-  },
-  "bugs": {
-    "url": "https://github.com/hms-networks/node-red-contrib-kolibri/issues"
-  },
-  "bundleDependencies": false,
-  "dependencies": {
-    "ws": "^7.2.1"
-  },
-  "deprecated": false,
+  "name": "node-red-contrib-kolibri",
   "description": "Node-RED nodes for connecting to a Kolibri Broker (e.g. HMS Hub)",
-  "devDependencies": {
-    "node-red": "^1.1.2",
-    "node-red-node-test-helper": "^0.2.5",
-    "should": "^13.2.3"
-  },
-  "directories": {
-    "lib": "lib"
-  },
+  "version": "0.3.0",
+  "author": "HMS Networks (https://www.hms-networks.com)",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/hms-networks/node-red-contrib-kolibri#readme",
   "keywords": [
     "node-red",
@@ -31,9 +16,10 @@
     "hms",
     "hub"
   ],
-  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/hms-networks/node-red-contrib-kolibri/issues"
+  },
   "main": "none",
-  "name": "node-red-contrib-kolibri",
   "node-red": {
     "nodes": {
       "kolibri-broker": "nodes/kolibri-broker.js",
@@ -48,5 +34,17 @@
   "scripts": {
     "test": "mocha \"test/**/*_spec.js\""
   },
-  "version": "0.3.0"
+  "directories": {
+    "lib": "lib"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "https-proxy-agent": "^5.0.0",
+    "ws": "^7.3.1"
+  },
+  "devDependencies": {
+    "node-red": "^1.1.3",
+    "node-red-node-test-helper": "^0.2.5",
+    "should": "^13.2.3"
+  }
 }

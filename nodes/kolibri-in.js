@@ -61,7 +61,6 @@ module.exports = function (RED) {
                     }
                     done();
                 });
-
             }
             else {
                 self.error('Kolibri: missing broker configuration');
