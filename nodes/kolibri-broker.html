@@ -60,12 +60,20 @@
     RED.nodes.registerType('kolibri-broker', {
         category: 'config',
         defaults: {
-            name: { value: '', required:true },
+            name: { value: '', required: true },
             broker: { value: '', required: true, validate: RED.validators.regex(/^(([a-z0-9])|([a-z0-9][a-z0-9\-]{0,30}[a-z0-9]))(\.[a-z0-9\-]+)+(\.[a-z]{2,})$/i) },
             port: { value: 443, required: true, validate: RED.validators.number() },
             useProxy: { value: false, required: false },
             proxyHost: { value: "localhost", required: false },
-            proxyPort: { value: 8080, required: false, validate: RED.validators.number() }
+            proxyPort: {
+                value: 8080, required: false, validate: function (v) {
+                    const isEnabled = $("#node-config-input-useProxy").is(':checked')
+                    if (isEnabled) {
+                        return RED.validators.number(v) && (v >= 0);
+                    }
+                    return true;
+                }
+            }
         },
         credentials: {
             user: { type: 'text', required: true },
