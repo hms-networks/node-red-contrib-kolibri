@@ -1,7 +1,7 @@
 {  
   "name": "node-red-contrib-kolibri",
   "description": "Node-RED nodes for connecting to a Kolibri Broker (e.g. HMS Hub)",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "HMS Networks (https://www.hms-networks.com)",
   "license": "Apache-2.0",
   "homepage": "https://github.com/hms-networks/node-red-contrib-kolibri#readme",
