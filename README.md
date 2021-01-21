@@ -31,8 +31,6 @@ Required:
 - Username
 - Password
 - Data Point Path: Path to the data variable
-- Kolibri protocol version
-- Project (only for versions >v1.0.kolibri)
 
 Optional:
 
