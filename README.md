@@ -31,6 +31,10 @@ Required:
 - Username
 - Password
 - Data Point Path: Path to the data variable
+- Kolibri protocol version
+- Project (only for versions >v1.0.kolibri)
+
+Attention: Logging in with a Kolibri Version >v1.0.kolibri will lock the user to this version. It is not possible to use v1.0.kolibri afterwards.
 
 Optional:
 
@@ -39,4 +43,4 @@ Optional:
 - Proxy Server
 - Proxy Port
 
-After deploying the flow the Nodes are trying to connect to the configured Broker(s). If the connections are established sucessfully a green "connected" label is displayed. If the connection is closed a red "disconnected" label is displayed.
+After deploying the flow the Nodes are trying to connect to the configured Broker(s). If the connections are established successfully a green "connected" label is displayed. If the connection is closed a red "disconnected" label is displayed.
