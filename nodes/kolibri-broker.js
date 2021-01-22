@@ -153,14 +153,9 @@ module.exports = function (RED) {
                         this.sendRpcRequestRetry('kolibri.getChallenge', {});
                     }
                     else {
-                        let pwHash = tools.hashPassword([
-                            self.password,
-                            self.user.toLowerCase(),
-                            self.project.toLowerCase()
-                        ]);
                         this.sendRpcRequestRetry('kolibri.login', {
                             user: self.user,
-                            password: pwHash.toString('hex'),
+                            password: self.password,
                             interval: self.options.keepaliveInterval,
                             timeout: self.options.keepaliveTimeout,
                             pendingTransactions: false
