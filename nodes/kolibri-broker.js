@@ -22,8 +22,13 @@ module.exports = function (RED) {
             this.project = config.project;
             
             // Config node state
+<<<<<<< Updated upstream
             this.brokerurl = 'ws://' + this.broker + ':' + this.port + '/';
             if (this.version != 'v1.0.kolibri') {
+=======
+            this.brokerurl = 'wss://' + this.broker + ':' + this.port + '/';
+            if (this.version != 'kolibri') {
+>>>>>>> Stashed changes
                 this.brokerurl = this.brokerurl + this.project + "/";
             }
 
@@ -149,7 +154,11 @@ module.exports = function (RED) {
                             });
                         }
                     }
+<<<<<<< Updated upstream
                     if (self.version == 'v1.0.kolibri') {
+=======
+                    if (self.version == 'kolibri') {
+>>>>>>> Stashed changes
                         this.sendRpcRequestRetry('kolibri.getChallenge', {});
                     }
                     else {

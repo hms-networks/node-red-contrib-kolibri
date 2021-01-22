@@ -32,9 +32,15 @@ Required:
 - Password
 - Data Point Path: Path to the data variable
 - Kolibri protocol version
+<<<<<<< Updated upstream
 - Project (only for versions >v1.0.kolibri)
 
 Attention: Logging in with a Kolibri Version >v1.0.kolibri will lock the user to this version. It is not possible to use v1.0.kolibri afterwards.
+=======
+- Project (only for versions > 'kolibri')
+
+Attention: Logging in with a Kolibri Version >'kolibri' will lock the user to this version. It is not possible to use version 'kolibri' afterwards.
+>>>>>>> Stashed changes
 
 Optional:
 
@@ -44,3 +50,8 @@ Optional:
 - Proxy Port
 
 After deploying the flow the Nodes are trying to connect to the configured Broker(s). If the connections are established successfully a green "connected" label is displayed. If the connection is closed a red "disconnected" label is displayed.
+<<<<<<< Updated upstream
+=======
+
+Please mind the timestamp resolution used by different Kolibri versions. By using higher Kolibri versions, you change the timestamps resolution from seconds into milliseconds
+>>>>>>> Stashed changes
