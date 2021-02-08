@@ -40,11 +40,11 @@
   "bundleDependencies": false,
   "dependencies": {
     "https-proxy-agent": "^5.0.0",
-    "ws": "^7.4.2"
+    "ws": "^7.4.3"
   },
   "devDependencies": {
-    "node-red": "^1.2.7",
-    "node-red-node-test-helper": "^0.2.5",
+    "node-red": "^1.2.9",
+    "node-red-node-test-helper": "^0.2.6",
     "should": "^13.2.3"
   }
 }
