@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
- *  COPYRIGHT NOTIFICATION (c) 2020 HMS Industrial Networks AB
+ *  COPYRIGHT NOTIFICATION (c) 2021 HMS Industrial Networks AB
  * --------------------------------------------------------------------------------------------
  *  Licensed under the Apache License, Version 2.0.
  *  See LICENSE.txt in the project root for license information.
@@ -18,9 +18,15 @@ module.exports = function (RED) {
             this.name = config.name;
             this.broker = config.broker;
             this.port = config.port;
-
+            this.version = config.version;
+            this.project = config.project;
+            
             // Config node state
             this.brokerurl = 'wss://' + this.broker + ':' + this.port + '/';
+            if (this.version != 'kolibri') {
+                this.brokerurl = this.brokerurl + this.project + "/";
+            }
+
             this.consumer = null;
             this.connected = false;
             this.connecting = false;
@@ -118,7 +124,7 @@ module.exports = function (RED) {
             if (!this.connected && !this.connecting) {
                 this.log('Connecting');
                 this.connecting = true;
-                this.consumer = new KolibriConsumer(this.brokerurl, this.options);
+                this.consumer = new KolibriConsumer(this.brokerurl, this.options, this.version);
 
                 this.consumer.on('error', function (error) {
                     self.error('Connection error: ' + error.message);
@@ -143,7 +149,18 @@ module.exports = function (RED) {
                             });
                         }
                     }
-                    this.sendRpcRequestRetry('kolibri.getChallenge', {});
+                    if (self.version == 'kolibri') {
+                        this.sendRpcRequestRetry('kolibri.getChallenge', {});
+                    }
+                    else {
+                        this.sendRpcRequestRetry('kolibri.login', {
+                            user: self.user,
+                            password: self.password,
+                            interval: self.options.keepaliveInterval,
+                            timeout: self.options.keepaliveTimeout,
+                            pendingTransactions: false
+                        });
+                    }
                 });
 
                 this.consumer.on('close', function (code) {
