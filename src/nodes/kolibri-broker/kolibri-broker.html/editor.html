@@ -1,0 +1,56 @@
+<script type="text/html" data-template-name="kolibri-broker">
+  <div class="form-row">
+      <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+      <input type="text" id="node-config-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+      <ul style="background: #fff; min-width: 600px; margin-bottom: 20px;" id="node-config-kolibri-broker-tabs"></ul>
+  </div>
+  <div id="node-config-kolibri-broker-tabs-content" style="min-height: 170px;">
+      <div id="kolibri-broker-tab-connection" style="display:none">
+          <label for="broker-border"></i> Kolibri Broker</label>
+          <div id="broker-border" style="border-style:solid; border-width:1px; padding:5px;">
+          <div class="form-row node-input-broker">
+              <label for="node-config-input-broker"><i class="fa fa-globe"></i> Server</label>
+              <input class="input-append-left" type="text" id="node-config-input-broker" placeholder="PROJECT.hms-hub.com" style="width: 50%;">
+              <label for="node-config-input-port" style="margin-left: 10px; width: 35px; "> Port</label>
+              <input type="text" id="node-config-input-port" placeholder="443" style="width:45px">
+          </div>
+          <div class="form-row node-input-project" id="project_field" style="display: block">
+              <label for="node-config-input-project"><i class="fa fa-clipboard"></i> Project</label>
+              <input class="input-append-left" type="text" id="node-config-input-project" placeholder="testv21" style="width: 50%;">
+          </div>
+      </div>
+          <label for="proxy-border"></i> Proxy</label>
+          <div style="border-style:solid; border-width:1px; padding:5px;">
+          <div class="form-row">
+              <label for="node-config-input-useProxy"><i class="fa fa-check"></i> Enable</label>
+              <input class="input-append-left" type="checkbox" id="node-config-input-useProxy" placeholder="false">
+          </div>
+              <div class="form-row">
+                <div style="margin-bottom: 10px;">
+                    <label for="node-config-input-proxyProtocol"><i class="fa fa-angle-double-right"></i> Protocol</label>
+                    <select id="node-config-input-proxyProtocol"  class="input-append-left" style="width: fit-content;" >
+                    <option value="http" selected="selected">HTTP</option>
+                    <option value="https">HTTPS</option>
+                    </select>
+                </div>
+                  <label for="node-config-input-proxyHost"><i class="fa fa-globe"></i> Server</label>
+                  <input class="input-append-left" type="text" id="node-config-input-proxyHost" placeholder="" style="width: 50%;">
+                  <label for="node-config-input-proxyPort" style="margin-left: 10px; width: 35px; "> Port</label>
+                  <input type="text" id="node-config-input-proxyPort" placeholder="" style="width:45px">
+              </div>
+          </div>
+      </div>
+      <div id="kolibri-broker-tab-security" style="display:none">
+          <div class="form-row">
+              <label for="node-config-input-user"><i class="fa fa-user"></i> Username</span></label>
+              <input type="text" id="node-config-input-user">
+          </div>
+          <div class="form-row">
+              <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</span></label>
+              <input type="password" id="node-config-input-password">
+          </div>
+      </div>
+  </div>
+</script>

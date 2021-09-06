@@ -1,0 +1,23 @@
+<script type="text/html" data-help-name="kolibri-in">
+  <p>Connects to the specified Kolibri broker and subscribes the specified data point.</p>
+  <p>Outputs a message with the properties:</p>
+  <ul>
+      <li><code>msg.payload</code>
+          <p>Is the value of the variables to transmit itself</p></li>
+      <li><code>msg.quality</code>
+          <p>Indicates the reliability of the current value as number. Possible qualities are:
+              0: Unknown -- Default 
+              1: Valid
+              2: Simulated -- The value is not a real field, but a simulated value
+              3: Forced -- The value is not a real field, but a forced value
+              4: Invalid
+              5-99: Reserved for future use
+              100ff: User-definable 
+          </p>
+      </li>
+      <li><code>msg.timestamp</code>
+          <p>The current unix timestamp in seconds</p></li></li>
+      <li><code>msg.path</code>
+          <p>The data point path to subscribe to</p></li></li>
+  </ul>
+</script>
