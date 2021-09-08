@@ -74,7 +74,7 @@ const nodeInit: NodeInitializer = (RED): void => {
             });
           }
         }).catch((e) => {
-          lazyThis.error('Error during node creation: '+ e);
+          lazyThis.error('Error during node creation: ' + e);
         });
 
       lazyThis.on('close', (done: any) => {
@@ -98,3 +98,4 @@ const nodeInit: NodeInitializer = (RED): void => {
 };
 
 module.exports = nodeInit;
+export = nodeInit;

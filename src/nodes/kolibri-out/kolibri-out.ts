@@ -76,20 +76,20 @@ const nodeInitOut: NodeInitializer = (RED): void => {
         this.brokerConn.write(ps);
       });
 
-        lazyThis.on('close', (done: any) => {
-          if (this.brokerConn) {
-            lazyThis.status({
-              fill: 'red',
-              shape: 'ring',
-              text: 'node-red:common.status.disconnected'
-            });
-            this.brokerConn.unsubscribe(this.path)
-              .then(() => {
-                return this.brokerConn.deregister(this);
-              })
-          }
-          done();
-        });
+      lazyThis.on('close', (done: any) => {
+        if (this.brokerConn) {
+          lazyThis.status({
+            fill: 'red',
+            shape: 'ring',
+            text: 'node-red:common.status.disconnected'
+          });
+          this.brokerConn.unsubscribe(this.path)
+            .then(() => {
+              return this.brokerConn.deregister(this);
+            })
+        }
+        done();
+      });
 
     }
   }
@@ -97,3 +97,4 @@ const nodeInitOut: NodeInitializer = (RED): void => {
 };
 
 module.exports = nodeInitOut;
+export = nodeInitOut;

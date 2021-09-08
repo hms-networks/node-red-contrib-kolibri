@@ -1,6 +1,6 @@
 {
-  "name": "node-red-kolibri",
-  "version": "0.2.3",
+  "name": "node-red-contrib-kolibri",
+  "version": "1.0.0",
   "description": "Node-RED nodes for connecting to a Kolibri Broker (e.g. HMS Hub)",
   "author": "HMS Networks (https://www.hms-networks.com)",
   "license": "Apache-2.0",
@@ -29,7 +29,7 @@
     "build:editor": "rollup -c rollup.config.editor.js",
     "build:runtime": "tsc -p tsconfig.runtime.json",
     "build": "rm -rf dist && npm run copy && npm run build:runtime && npm run build:editor",
-    "test": "jest --forceExit --detectOpenHandles --colors",
+    "test": "jest --coverage --verbose --forceExit --detectOpenHandles --colors",
     "test:watch": "jest --forceExit --detectOpenHandles --watchAll",
     "lint": "prettier --ignore-path .eslintignore --check '**/*.{js,ts,md}'; eslint --ext .js,.ts .",
     "lint:fix": "prettier --ignore-path .eslintignore --write '**/*.{js,ts,md}'; eslint --ext .js,.ts . --fix"
@@ -42,7 +42,7 @@
     }
   },
   "dependencies": {
-    "@hms-networks/kolibri-js-client": "^1.0.0"
+    "@hms-networks/kolibri-js-client": "^1.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.5",

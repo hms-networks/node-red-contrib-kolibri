@@ -331,3 +331,4 @@ const nodeInit: NodeInitializer = (RED): void => {
 };
 
 module.exports = nodeInit;
+export = nodeInit;
