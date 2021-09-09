@@ -15,14 +15,14 @@
 */
 
 
-import testHelper, { TestFlowsItem } from "node-red-node-test-helper";
-import KolibriOutNode from "../../src/nodes/kolibri-out/kolibri-out";
-import { KolibriOutNodeDef } from "../../src/nodes/kolibri-out/modules/types";
+import testHelper, { TestFlowsItem } from 'node-red-node-test-helper';
+import KolibriOutNode from '../../src/nodes/kolibri-out/kolibri-out';
+import { KolibriOutNodeDef } from '../../src/nodes/kolibri-out/modules/types';
 
 type FlowsItem = TestFlowsItem<KolibriOutNodeDef>;
 type Flows = Array<FlowsItem>;
 
-describe("kolibri-out node", () => {
+describe('kolibri-out node', () => {
     beforeEach((done) => {
         testHelper.startServer(done);
     });
@@ -33,14 +33,14 @@ describe("kolibri-out node", () => {
         });
     });
 
-    it("should be loaded", (done) => {
+    it('should be loaded', (done) => {
         const flows: Flows = [
-            { id: "n1", type: "kolibri-out", name: "KolibriOut" },
+            { id: 'n1', type: 'kolibri-out', name: 'KolibriOut' }
         ];
         testHelper.load(KolibriOutNode, flows, () => {
-            const n1 = testHelper.getNode("n1");
+            const n1 = testHelper.getNode('n1');
             expect(n1).toBeTruthy();
-            expect(n1.name).toEqual("KolibriOut");
+            expect(n1.name).toEqual('KolibriOut');
             done();
         });
     });

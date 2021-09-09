@@ -15,65 +15,69 @@
 */
 
 
-import { EditorRED } from "node-red";
-import { KolibriBrokerEditorNodeCredentials, KolibriBrokerEditorNodeProperties } from "./modules/types";
+import { EditorRED } from 'node-red';
+import { KolibriBrokerEditorNodeCredentials, KolibriBrokerEditorNodeProperties } from './modules/types';
 
 declare const RED: EditorRED;
 
-RED.nodes.registerType<KolibriBrokerEditorNodeProperties, KolibriBrokerEditorNodeCredentials>("kolibri-broker", {
-  category: 'config',
-  defaults: {
-    name: { value: '', required: true },
-    broker: { value: '', required: true, validate: RED.validators.regex(/(?:^|[ \t])((?:localhost|[\w-]+(?:\.[\w-]+)+)(\/\S*)?)/i) },
-    port: { value: 443, required: true, validate: RED.validators.number() },
-    useProxy: { value: false, required: false },
-    proxyHost: { value: "localhost", required: false },
-    proxyPort: {
-      value: 8080, required: false, validate: function (v) {
-        const isEnabled = $("#node-config-input-useProxy").is(':checked')
-        if (isEnabled) {
-          return !isNaN(v as any) && !isNaN((Number.parseInt(v))) && Number.parseInt(v) >= 0;
-        }
-        return true;
-      }
+RED.nodes.registerType<KolibriBrokerEditorNodeProperties, KolibriBrokerEditorNodeCredentials>('kolibri-broker', {
+    category: 'config',
+    defaults: {
+        name: { value: '', required: true },
+        broker: { value: '', required: true, validate: RED.validators.regex(/(?:^|[ \t])((?:localhost|[\w-]+(?:\.[\w-]+)+)(\/\S*)?)/i) },
+        port: { value: 443, required: true, validate: RED.validators.number() },
+        useProxy: { value: false, required: false },
+        proxyHost: { value: 'localhost', required: false },
+        proxyPort: {
+            value: 8080,
+            required: false,
+            validate: function (v) {
+                const isEnabled = $('#node-config-input-useProxy').is(':checked');
+                if (isEnabled) {
+                    return !isNaN(v as any) && !isNaN((Number.parseInt(v))) && Number.parseInt(v) >= 0;
+                }
+                return true;
+            }
+        },
+        proxyProtocol: {
+            value: 'http',
+            required: true,
+            validate: function (v) {
+                const isEnabled = $('#node-config-input-useProxy').is(':checked');
+                if (isEnabled) {
+                    if (v === 'http' || v === 'https') {
+                        return true;
+                    }
+                    return false;
+                }
+                return true;
+            }
+        },
+        project: { value: '', required: true }
     },
-    proxyProtocol: {
-      value: 'http', required: true, validate: function (v) {
-        const isEnabled = $("#node-config-input-useProxy").is(':checked')
-        if (isEnabled) {
-          if (v === 'http' || v === 'https') {
-            return true;
-          }
-          return false;
-        }
-        return true;
-      }
+    credentials: {
+        user: { type: 'text' },
+        password: { type: 'password' }
     },
-    project: { value: '', required: true }
-  },
-  credentials: {
-    user: { type: 'text' },
-    password: { type: 'password' }
-  },
-  label: function () {
-    return this.name || 'kolibri-broker';
-  },
-  oneditprepare: function () {
-    const tabs = RED.tabs.create({
-      id: 'node-config-kolibri-broker-tabs',
-      onchange: function (tab: any) {
-        $('#node-config-kolibri-broker-tabs-content').children().hide();
-        $('#' + tab.id).show();
-      }
-    } as any);
-    tabs.addTab({
-      id: 'kolibri-broker-tab-connection',
-      label: 'Connection'
-    }, 0);
-    tabs.addTab({
-      id: 'kolibri-broker-tab-security',
-      label: 'Security'
-    }, 1);
-    setTimeout(() => { tabs.resize(); }, 0);
-  }
+    label: function () {
+        return this.name || 'kolibri-broker';
+    },
+    oneditprepare: function () {
+        const tabs = RED.tabs.create({
+            id: 'node-config-kolibri-broker-tabs',
+            onchange: function (tab: any) {
+                $('#node-config-kolibri-broker-tabs-content').children().hide();
+                $('#' + tab.id).show();
+            }
+        } as any);
+        tabs.addTab({
+            id: 'kolibri-broker-tab-connection',
+            label: 'Connection'
+        }, 0);
+        tabs.addTab({
+            id: 'kolibri-broker-tab-security',
+            label: 'Security'
+        }, 1);
+        setTimeout(() => { tabs.resize(); }, 0);
+    }
 });

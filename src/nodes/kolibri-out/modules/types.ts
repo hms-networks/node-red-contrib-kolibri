@@ -15,9 +15,9 @@
 */
 
 
-import { NodeDef } from "node-red";
-import { IKolibriBrokerNode } from "src/nodes/kolibri-broker/modules/types";
-import { KolibriOutOptions } from "../shared/types";
+import { NodeDef } from 'node-red';
+import { IKolibriBrokerNode } from 'src/nodes/kolibri-broker/modules/types';
+import { KolibriOutOptions } from '../shared/types';
 
 export interface KolibriOutNodeDef extends NodeDef, KolibriOutOptions { }
 

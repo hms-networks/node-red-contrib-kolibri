@@ -15,14 +15,14 @@
 */
 
 
-import testHelper, { TestFlowsItem } from "node-red-node-test-helper";
-import KolibriBrokerNode from "../../src/nodes/kolibri-broker/kolibri-broker";
-import { KolibriBrokerNodeDef } from "../../src/nodes/kolibri-broker/modules/types";
+import testHelper, { TestFlowsItem } from 'node-red-node-test-helper';
+import KolibriBrokerNode from '../../src/nodes/kolibri-broker/kolibri-broker';
+import { KolibriBrokerNodeDef } from '../../src/nodes/kolibri-broker/modules/types';
 
 type FlowsItem = TestFlowsItem<KolibriBrokerNodeDef>;
 type Flows = Array<FlowsItem>;
 
-describe("kolibri-broker node", () => {
+describe('kolibri-broker node', () => {
     beforeEach((done) => {
         testHelper.startServer(done);
     });
@@ -33,14 +33,14 @@ describe("kolibri-broker node", () => {
         });
     });
 
-    it("should be loaded", (done) => {
+    it('should be loaded', (done) => {
         const flows: Flows = [
-            { id: "n1", type: "kolibri-broker", name: "KolibriBroker" },
+            { id: 'n1', type: 'kolibri-broker', name: 'KolibriBroker' }
         ];
         testHelper.load(KolibriBrokerNode, flows, () => {
-            const n1 = testHelper.getNode("n1");
+            const n1 = testHelper.getNode('n1');
             expect(n1).toBeTruthy();
-            expect(n1.name).toEqual("KolibriBroker");
+            expect(n1.name).toEqual('KolibriBroker');
             done();
         });
     });

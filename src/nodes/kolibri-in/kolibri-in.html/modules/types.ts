@@ -15,8 +15,8 @@
 */
 
 
-import { EditorNodeProperties } from "node-red";
-import { KolibriInOptions } from "../../shared/types";
+import { EditorNodeProperties } from 'node-red';
+import { KolibriInOptions } from '../../shared/types';
 
 export interface KolibriInEditorNodeProperties
   extends EditorNodeProperties,

@@ -15,27 +15,27 @@
 */
 
 
-import { EditorRED } from "node-red";
-import { KolibriOutEditorNodeProperties } from "./modules/types";
+import { EditorRED } from 'node-red';
+import { KolibriOutEditorNodeProperties } from './modules/types';
 
 declare const RED: EditorRED;
 
-RED.nodes.registerType<KolibriOutEditorNodeProperties>("kolibri-out", {
-  category: 'network',
-  defaults: {
-    name: { value: '' },
-    path: { value: '', required: true },
-    broker: { value: '', type: 'kolibri-broker', required: true }
-  },
-  inputs: 1,
-  outputs: 0,
-  color: '#ffaaaa',
-  icon: 'bridge.png',
-  align: 'right',
-  label: function () {
-    return this.name || this.path || 'kolibri';
-  },
-  labelStyle: function () {
-    return this.name ? 'node_label_italic' : '';
-  }
+RED.nodes.registerType<KolibriOutEditorNodeProperties>('kolibri-out', {
+    category: 'network',
+    defaults: {
+        name: { value: '' },
+        path: { value: '', required: true },
+        broker: { value: '', type: 'kolibri-broker', required: true }
+    },
+    inputs: 1,
+    outputs: 0,
+    color: '#ffaaaa',
+    icon: 'bridge.png',
+    align: 'right',
+    label: function () {
+        return this.name || this.path || 'kolibri';
+    },
+    labelStyle: function () {
+        return this.name ? 'node_label_italic' : '';
+    }
 });

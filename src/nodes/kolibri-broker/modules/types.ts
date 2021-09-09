@@ -15,9 +15,9 @@
 */
 
 
-import { KolibriClient } from "@hms-networks/kolibri-js-client";
-import { Node, NodeDef } from "node-red";
-import { KolibriBrokerOptions } from "../shared/types";
+import { KolibriClient } from '@hms-networks/kolibri-js-client';
+import { Node, NodeDef } from 'node-red';
+import { KolibriBrokerOptions } from '../shared/types';
 
 export interface KolibriBrokerNodeDef extends NodeDef, KolibriBrokerOptions { }
 
