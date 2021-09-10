@@ -1,7 +1,5 @@
 # Node-RED Kolibri Nodes
 
-**Work in progress!**
-
 There are two types of Node-RED nodes, __kolibri in__ and __kolibri out__, which can be used to exchange data with a Kolibri Broker (e.g. HMS Hub).
 
 ## Nodes Overview
@@ -32,9 +30,7 @@ Required:
 - Password
 - Data Point Path: Path to the data variable
 - Kolibri protocol version
-- Project (only for versions > 'kolibri')
-
-Attention: Logging in with a Kolibri Version >'kolibri' will lock the user to this version. It is not possible to use version 'kolibri' afterwards.
+- Project
 
 Optional:
 
@@ -44,5 +40,3 @@ Optional:
 - Proxy Port
 
 After deploying the flow the Nodes are trying to connect to the configured Broker(s). If the connections are established successfully a green "connected" label is displayed. If the connection is closed a red "disconnected" label is displayed.
-
-Please mind the timestamp resolution used by different Kolibri versions. By using higher Kolibri versions, you change the timestamps resolution from seconds into milliseconds
