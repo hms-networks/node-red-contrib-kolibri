@@ -11,7 +11,7 @@
     "noEmitOnError": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "./",
+    "rootDir": "src",
     "removeComments": false,
     "noEmit": false,
     "importHelpers": false,
