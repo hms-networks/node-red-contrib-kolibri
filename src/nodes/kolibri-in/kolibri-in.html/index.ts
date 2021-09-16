@@ -25,7 +25,8 @@ RED.nodes.registerType<KolibriInEditorNodeProperties>('kolibri-in', {
     defaults: {
         name: { value: '' },
         path: { value: '', required: true },
-        broker: { value: '', type: 'kolibri-broker', required: true }
+        broker: { value: '', type: 'kolibri-broker', required: true },
+        resume: { value: false, required: false }
     },
     inputs: 0,
     outputs: 1,

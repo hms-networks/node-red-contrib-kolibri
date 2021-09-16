@@ -15,7 +15,7 @@
 */
 
 
-import { KolibriClient } from '@hms-networks/kolibri-js-client';
+import { KolibriClient, SubscribeParams, UnsubscribeParams } from '@hms-networks/kolibri-js-client';
 import { Node, NodeDef } from 'node-red';
 import { KolibriBrokerOptions } from '../shared/types';
 
@@ -35,6 +35,7 @@ export interface IKolibriBrokerNode extends Partial<Node<{ user: string, passwor
     user: string;
     password: string;
     client?: KolibriClient;
+    clientUuid: string;
     nodes: Map<string, Node>;
     subscriptions: Map<string, Subscription>;
     connect(): Promise<void>;
@@ -42,7 +43,7 @@ export interface IKolibriBrokerNode extends Partial<Node<{ user: string, passwor
     register(node: any): Promise<void>;
     deregister(node: any): Promise<void>;
     addSubscribeListener(path: string, listener: (path: string, ts: number, qual: number, value: any) => void): void;
-    subscribe(path: string): Promise<any>;
-    unsubscribe(path: string): Promise<void>;
+    subscribe(subscribeParams: SubscribeParams): Promise<any>;
+    unsubscribe(unsubscribeParams: UnsubscribeParams): Promise<void>;
     write(ps: { path: string; value: any; timestamp: any; quality: any; }): Promise<void>;
 }

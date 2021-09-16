@@ -15,7 +15,7 @@
 */
 
 
-import { ClientConfig, KolibriClient, KolibriClientFactory, LoginParams, SubscribeParams, SubscribeResult, UnsubscribeParams, WriteParams } from '@hms-networks/kolibri-js-client';
+import { ClientConfig, KolibriClient, KolibriClientFactory, LoginParams, LoginResult, SubscribeParams, SubscribeResult, UnsubscribeParams, WriteParams } from '@hms-networks/kolibri-js-client';
 import { NodeInitializer, Node } from 'node-red';
 import { IKolibriBrokerNode, KolibriBrokerNodeDef, Subscription } from './modules/types';
 
@@ -39,6 +39,7 @@ const nodeInit: NodeInitializer = (RED): void => {
     proxyHost: string;
     proxyPort: number;
     proxyProtocol: string;
+    clientUuid: string;
     private lazyThis: Node<{ user: string, password: string }> & IKolibriBrokerNode;;
     constructor(config: KolibriBrokerNodeDef) {
         this.lazyThis = this as unknown as Node<{ user: string, password: string }> & IKolibriBrokerNode;
@@ -55,6 +56,7 @@ const nodeInit: NodeInitializer = (RED): void => {
         this.proxyHost = config.proxyHost;
         this.proxyPort = config.proxyPort;
         this.proxyProtocol = config.proxyProtocol;
+        this.clientUuid = config.clientUuid;
 
         // Config node state
         this.brokerUrl = 'ws://' + this.broker + ':' + this.port;
@@ -177,7 +179,23 @@ const nodeInit: NodeInitializer = (RED): void => {
                 interval: 15,
                 timeout: 5
             };
-            await this.client.login(loginParams);
+
+            if (this.clientUuid) {
+                loginParams.client = this.clientUuid as string;
+            }
+            else {
+                const uuid = this.lazyThis.context().global.get('client-' + this.lazyThis.id);
+                if (uuid) {
+                    loginParams.client = uuid as string;
+                }
+            }
+
+            const loginResult: LoginResult = await this.client.login(loginParams);
+
+            if (!this.clientUuid) {
+                this.lazyThis.context().global.set('client-' + this.lazyThis.id, loginResult.client);
+            }
+
             this.connecting = false;
             this.connected = true;
             this.lazyThis.log('Logged in');
@@ -233,16 +251,15 @@ const nodeInit: NodeInitializer = (RED): void => {
         }
     }
 
-    async subscribe(path: string): Promise<void> {
-        const subscription = this.subscriptions.get(path);
+    async subscribe(subscribeParams: SubscribeParams): Promise<void> {
+        const subscription = this.subscriptions.get(subscribeParams.path);
 
         if (!this.connected || subscription?.subscribed) {
             return;
         }
 
         try {
-            const subscribeParams: SubscribeParams[] = [{ path: path }];
-            const results = await this.client.subscribe(subscribeParams);
+            const results = await this.client.subscribe([subscribeParams]);
 
             results.forEach((result: SubscribeResult) => {
                 const subscriptionToUpdate = this.subscriptions.get(result.path);
@@ -252,11 +269,11 @@ const nodeInit: NodeInitializer = (RED): void => {
             });
         }
         catch (e: any) {
-            this.lazyThis.error('Subscription failed: ' + e.kolibriError.message + ' ' + path);
+            this.lazyThis.error('Subscription failed: ' + e.kolibriError.message + ' ' + subscribeParams.path);
 
             // Change status for node
             this.nodes.forEach((node: any) => {
-                if (node.path === path) {
+                if (node.path === subscribeParams.path) {
                     node.status({
                         fill: 'yellow',
                         shape: 'ring',
@@ -282,16 +299,15 @@ const nodeInit: NodeInitializer = (RED): void => {
         });
     }
 
-    async unsubscribe(path: string): Promise<void> {
-        const subscription = this.subscriptions.get(path);
+    async unsubscribe(unsubscribeParams: UnsubscribeParams): Promise<void> {
+        const subscription = this.subscriptions.get(unsubscribeParams.path);
 
         if (!this.connected || !subscription) {
             return;
         }
 
         try {
-            const unsubscribeParams: UnsubscribeParams[] = [{ path: path }];
-            await this.client.unsubscribe(unsubscribeParams);
+            await this.client.unsubscribe([unsubscribeParams]);
 
             subscription.subscribed = false;
         }

@@ -24,6 +24,7 @@ const nodeInit: NodeInitializer = (RED): void => {
     name: string;
     path: string;
     broker: string;
+    resume: boolean;
     brokerConn: IKolibriBrokerNode;
     constructor(config: KolibriInNodeDef) {
         const lazyThis = this as unknown as Node & IKolibriInNode;
@@ -31,6 +32,7 @@ const nodeInit: NodeInitializer = (RED): void => {
         this.name = config.name;
         this.path = config.path;
         this.broker = config.broker;
+        this.resume = config.resume;
         this.brokerConn = RED.nodes.getNode(config.broker) as unknown as IKolibriBrokerNode;
 
         lazyThis.status({
@@ -61,7 +63,7 @@ const nodeInit: NodeInitializer = (RED): void => {
                     lazyThis.send(msg);
                 });
             }).then(() => {
-                return this.brokerConn.subscribe(this.path);
+                return this.brokerConn.subscribe({ path: this.path, resume: this.resume });
             })
             .then(() => {
                 if (this.brokerConn.connected) {
@@ -82,7 +84,7 @@ const nodeInit: NodeInitializer = (RED): void => {
                     shape: 'ring',
                     text: 'node-red:common.status.disconnected'
                 });
-                this.brokerConn.unsubscribe(this.path)
+                this.brokerConn.unsubscribe({ path: this.path })
                     .then(() => {
                         return this.brokerConn.deregister(this);
                     });

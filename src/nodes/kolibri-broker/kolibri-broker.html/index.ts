@@ -54,7 +54,8 @@ RED.nodes.registerType<KolibriBrokerEditorNodeProperties, KolibriBrokerEditorNod
                 return true;
             }
         },
-        project: { value: '', required: true }
+        project: { value: '', required: true },
+        clientUuid: { value: '', required: false }
     },
     credentials: {
         user: { type: 'text' },
