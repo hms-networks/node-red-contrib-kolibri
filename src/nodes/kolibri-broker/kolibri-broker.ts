@@ -50,7 +50,7 @@ const nodeInit: NodeInitializer = (RED): void => {
         this.broker = config.broker;
         this.port = config.port;
         this.project = config.project;
-        this.path = config.path;
+        this.path = config.path ? config.path : '/';
         this.useProxy = config.useProxy;
         this.proxyHost = config.proxyHost;
         this.proxyPort = config.proxyPort;

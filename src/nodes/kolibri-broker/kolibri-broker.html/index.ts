@@ -26,7 +26,7 @@ RED.nodes.registerType<KolibriBrokerEditorNodeProperties, KolibriBrokerEditorNod
         name: { value: '', required: true },
         broker: { value: '', required: true, validate: RED.validators.regex(/(?:^|[ \t])((?:localhost|[\w-]+(?:\.[\w-]+)+)(\/\S*)?)/i) },
         port: { value: 443, required: true, validate: RED.validators.number() },
-        path: { value: '/', required: false },
+        path: { value: '/', required: true, validate: RED.validators.regex(/^\/(([a-z0-9][a-z0-9_.-]{0,30}\/?)*[a-z0-9])?$/i)},
         useProxy: { value: false, required: false },
         proxyHost: { value: 'localhost', required: false },
         proxyPort: {
