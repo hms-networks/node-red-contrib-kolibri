@@ -18,6 +18,7 @@
 export interface KolibriBrokerOptions {
   broker: string,
   port: number,
+  path: string,
   useProxy: boolean,
   proxyHost: string,
   proxyPort: number,

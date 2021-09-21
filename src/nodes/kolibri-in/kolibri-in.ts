@@ -28,7 +28,6 @@ const nodeInit: NodeInitializer = (RED): void => {
     constructor(config: KolibriInNodeDef) {
         const lazyThis = this as unknown as Node & IKolibriInNode;
         RED.nodes.createNode(lazyThis, config);
-
         this.name = config.name;
         this.path = config.path;
         this.broker = config.broker;

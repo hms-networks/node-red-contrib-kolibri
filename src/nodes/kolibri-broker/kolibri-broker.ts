@@ -25,6 +25,7 @@ const nodeInit: NodeInitializer = (RED): void => {
     broker: string;
     port: number;
     project: string;
+    path: string;
     brokerUrl: string;
     connected: boolean;
     connecting: boolean;
@@ -49,6 +50,7 @@ const nodeInit: NodeInitializer = (RED): void => {
         this.broker = config.broker;
         this.port = config.port;
         this.project = config.project;
+        this.path = config.path ? config.path : '/';
         this.useProxy = config.useProxy;
         this.proxyHost = config.proxyHost;
         this.proxyPort = config.proxyPort;
@@ -77,7 +79,7 @@ const nodeInit: NodeInitializer = (RED): void => {
         const kolibriConfig: ClientConfig = {
             host: this.brokerUrl,
             project: this.project,
-            path: '/',
+            path: this.path,
             reconnect: {
                 maxReconnects: 99,
                 maxReconnectDelay: 15
