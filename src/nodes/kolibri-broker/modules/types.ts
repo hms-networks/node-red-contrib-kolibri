@@ -35,7 +35,7 @@ export interface IKolibriBrokerNode extends Partial<Node<{ user: string, passwor
     user: string;
     password: string;
     client?: KolibriClient;
-    clientUuid: string;
+    clientId: string;
     nodes: Map<string, Node>;
     subscriptions: Map<string, Subscription>;
     connect(): Promise<void>;
@@ -43,7 +43,7 @@ export interface IKolibriBrokerNode extends Partial<Node<{ user: string, passwor
     register(node: any): Promise<void>;
     deregister(node: any): Promise<void>;
     addSubscribeListener(path: string, listener: (path: string, ts: number, qual: number, value: any) => void): void;
-    subscribe(subscribeParams: SubscribeParams): Promise<any>;
+    subscribe(subscribeParams: SubscribeParams): Promise<void>;
     unsubscribe(unsubscribeParams: UnsubscribeParams): Promise<void>;
     write(ps: { path: string; value: any; timestamp: any; quality: any; }): Promise<void>;
 }

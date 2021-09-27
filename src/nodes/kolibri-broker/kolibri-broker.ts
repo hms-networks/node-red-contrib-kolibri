@@ -39,7 +39,7 @@ const nodeInit: NodeInitializer = (RED): void => {
     proxyHost: string;
     proxyPort: number;
     proxyProtocol: string;
-    clientUuid: string;
+    clientId: string;
     private lazyThis: Node<{ user: string, password: string }> & IKolibriBrokerNode;;
     constructor(config: KolibriBrokerNodeDef) {
         this.lazyThis = this as unknown as Node<{ user: string, password: string }> & IKolibriBrokerNode;
@@ -56,7 +56,7 @@ const nodeInit: NodeInitializer = (RED): void => {
         this.proxyHost = config.proxyHost;
         this.proxyPort = config.proxyPort;
         this.proxyProtocol = config.proxyProtocol;
-        this.clientUuid = config.clientUuid;
+        this.clientId = config.clientId;
 
         // Config node state
         this.brokerUrl = 'ws://' + this.broker + ':' + this.port;
@@ -180,8 +180,8 @@ const nodeInit: NodeInitializer = (RED): void => {
                 timeout: 5
             };
 
-            if (this.clientUuid) {
-                loginParams.client = this.clientUuid as string;
+            if (this.clientId) {
+                loginParams.client = this.clientId as string;
             }
             else {
                 const uuid = this.lazyThis.context().global.get('client-' + this.lazyThis.id);
@@ -192,7 +192,7 @@ const nodeInit: NodeInitializer = (RED): void => {
 
             const loginResult: LoginResult = await this.client.login(loginParams);
 
-            if (!this.clientUuid) {
+            if (!this.clientId) {
                 this.lazyThis.context().global.set('client-' + this.lazyThis.id, loginResult.client);
             }
 
