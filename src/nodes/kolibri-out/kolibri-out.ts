@@ -83,7 +83,7 @@ const nodeInitOut: NodeInitializer = (RED): void => {
                     shape: 'ring',
                     text: 'node-red:common.status.disconnected'
                 });
-                this.brokerConn.unsubscribe(this.path)
+                this.brokerConn.unsubscribe({ path: this.path })
                     .then(() => {
                         return this.brokerConn.deregister(this);
                     });

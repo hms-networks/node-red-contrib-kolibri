@@ -18,4 +18,5 @@
 export interface KolibriInOptions {
   path: string;
   broker: string;
+  resume: boolean;
 }

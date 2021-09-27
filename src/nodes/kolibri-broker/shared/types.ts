@@ -24,4 +24,5 @@ export interface KolibriBrokerOptions {
   proxyPort: number,
   proxyProtocol: string,
   project: string,
+  clientId: string
 }
