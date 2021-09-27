@@ -17,8 +17,8 @@ Required:
 Optional:
 
 - Name: Node name that is displayed in the Node-RED flow
-- Resume: if true, history data values from last successful kolibri.write RPC will be
-          included in the response. The client must login with the same clientId from the
+- Resume: if true, all data values from last successful request will be
+          included. The client must login with the same clientId from the
           session that should be resumed.
 
 ### Kolibri out
