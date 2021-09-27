@@ -7,10 +7,33 @@ There are two types of Node-RED nodes, __kolibri in__ and __kolibri out__, which
 ### Kolibri in
 
 This node can subscribe to the specified data point path of the connected Kolibri Broker.
+The __kolibri in__ has the following properties.
+
+Required:
+
+- Kolibri broker
+- Data Point Path: Path to the data variable
+
+Optional:
+
+- Name: Node name that is displayed in the Node-RED flow
+- Resume: if true, history data values from last successful kolibri.write RPC will be
+          included in the response. The client must login with the same clientId from the
+          session that should be resumed.
 
 ### Kolibri out
 
 This node can publish to the specified data point path of the connected Kolibri Broker.
+The __kolibri out__ has the following properties.
+
+Required:
+
+- Kolibri broker
+- Data Point Path: Path to the data variable
+
+Optional:
+
+- Name: Node name that is displayed in the Node-RED flow
 
 ## Getting started
 
@@ -28,7 +51,7 @@ Required:
 - Server Port
 - Username
 - Password
-- Data Point Path: Path to the data variable
+- Path: Login path
 - Kolibri protocol version
 - Project
 
@@ -38,5 +61,6 @@ Optional:
 - Enable Proxy
 - Proxy Server
 - Proxy Port
+- ClientId: Client name or uuid of the connecting client
 
 After deploying the flow the Nodes are trying to connect to the configured Broker(s). If the connections are established successfully a green "connected" label is displayed. If the connection is closed a red "disconnected" label is displayed.
