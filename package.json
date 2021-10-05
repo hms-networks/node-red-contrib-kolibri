@@ -25,10 +25,9 @@
   ],
   "main": "none",
   "scripts": {
-    "copy": "copyfiles -u 2 \"./src/nodes/**/*.{png,svg}\" \"./dist/nodes/\"",
     "build:editor": "rollup -c rollup.config.editor.js",
     "build:runtime": "tsc -p tsconfig.runtime.json",
-    "build": "rm -rf dist && npm run copy && npm run build:runtime && npm run build:editor",
+    "build": "rm -rf dist && npm run build:runtime && npm run build:editor",
     "test": "jest --coverage --verbose --forceExit --detectOpenHandles --colors",
     "test:watch": "jest --forceExit --detectOpenHandles --watchAll",
     "lint": "prettier --ignore-path .eslintignore --check '**/*.{js,ts,md}'; eslint --ext .js,.ts .",
