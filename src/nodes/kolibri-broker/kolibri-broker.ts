@@ -59,7 +59,7 @@ const nodeInit: NodeInitializer = (RED): void => {
         this.clientId = config.clientId;
 
         // Config node state
-        this.brokerUrl = 'ws://' + this.broker + ':' + this.port;
+        this.brokerUrl = 'wss://' + this.broker + ':' + this.port;
         this.connected = false;
         this.connecting = false;
         this.closing = false;
