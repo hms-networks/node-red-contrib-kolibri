@@ -55,7 +55,7 @@ RED.nodes.registerType<KolibriBrokerEditorNodeProperties, KolibriBrokerEditorNod
             }
         },
         project: { value: '', required: true },
-        clientId: { value: '', required: false, validate: RED.validators.regex(/(^(([a-z0-9])|([a-z0-9][a-z0-9_.-]{0,30}[a-z0-9]))$)|(^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$)/i) }
+        clientId: { value: '', required: false, validate: RED.validators.regex(/(^$|(([a-z0-9])|([a-z0-9][a-z0-9_.-]{0,30}[a-z0-9]))$)|(^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$)/i) }
     },
     credentials: {
         user: { type: 'text' },
