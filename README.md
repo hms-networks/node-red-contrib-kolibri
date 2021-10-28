@@ -61,6 +61,6 @@ Optional:
 - Enable Proxy
 - Proxy Server
 - Proxy Port
-- ClientId: Client name or uuid of the connecting client
+- ClientId: Client name or uuid of the connecting client (required if **resume** set on the **Kolibri In Node**)
 
 After deploying the flow the Nodes are trying to connect to the configured Broker(s). If the connections are established successfully a green "connected" label is displayed. If the connection is closed a red "disconnected" label is displayed.
