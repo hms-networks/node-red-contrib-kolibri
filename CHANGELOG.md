@@ -9,7 +9,12 @@ The nodes establish the connection to the Kolibri Broker with the Kolibri Protoc
 Attention: Logging in with a Kolibri Version v3.2 will convert the user to a new format introduced in v2.0. After that it is not possible to use the v1.0 ('kolibri') protocol version with that user.
 Please also keep in mind that the timestamp resolution changed since the kolibri protocol v2.0 to microseconds resolution.
 
-### Changes
+### Features
+
+- Added support for resuming a subscription (kolibri in node) in case of a disconnected node.
+- Added support for login to a specified node group path instead of the root path.
+
+### Other
 
 - Nodes are rewritten in Typescript
 - Replaced custom client implementation with @hms-networks/kolibri-js-client to communicate with the Kolibri Broker.
