@@ -2,6 +2,13 @@
 
 There are two types of Node-RED nodes, __kolibri in__ and __kolibri out__, which can be used to exchange data with a Kolibri Broker (e.g. HMS Hub).
 
+## Attention: 
+Since version the plugin version 1.0.0 we only support the Kolibri Protocol V3.2. Logging in with a Kolibri Version v3.2 to a Kolibri Broker will convert the user to a new format introduced in v2.0. After that it is not possible to use the original ('kolibri') protocol version with that user. If you want to continue using the older Kolibri Protocol version please use the plugin version 0.4.1.
+
+Please also keep in mind that the timestamp resolution changed since the kolibri protocol v2.0 to microseconds resolution.
+
+For more details about changes in v1.0.0 please see CHANGELOG.md or the release logs.
+
 ## Nodes Overview
 
 ### Kolibri in
