@@ -21,77 +21,77 @@ import { IKolibriInNode, KolibriInNodeDef } from './modules/types';
 
 const nodeInit: NodeInitializer = (RED): void => {
     class KolibriInNode implements IKolibriInNode {
-    name: string;
-    path: string;
-    broker: string;
-    resume: boolean;
-    brokerConn: IKolibriBrokerNode;
-    constructor(config: KolibriInNodeDef) {
-        const lazyThis = this as unknown as Node & IKolibriInNode;
-        RED.nodes.createNode(lazyThis, config);
-        this.name = config.name;
-        this.path = config.path;
-        this.broker = config.broker;
-        this.resume = config.resume;
-        this.brokerConn = RED.nodes.getNode(config.broker) as unknown as IKolibriBrokerNode;
+        name: string;
+        path: string;
+        broker: string;
+        resume: boolean;
+        brokerConn: IKolibriBrokerNode;
+        constructor(config: KolibriInNodeDef) {
+            const lazyThis = this as unknown as Node & IKolibriInNode;
+            RED.nodes.createNode(lazyThis, config);
+            this.name = config.name;
+            this.path = config.path;
+            this.broker = config.broker;
+            this.resume = config.resume;
+            this.brokerConn = RED.nodes.getNode(config.broker) as unknown as IKolibriBrokerNode;
 
-        lazyThis.status({
-            fill: 'red',
-            shape: 'ring',
-            text: 'node-red:common.status.disconnected'
-        });
-
-        if (!this.brokerConn) {
-            lazyThis.error('Kolibri: missing broker configuration');
-            return;
-        }
-
-        if (!this.path) {
-            lazyThis.error('Kolibri: path not defined for node ' + this.name);
-            return;
-        }
-
-        this.brokerConn.register(this)
-            .then(() => {
-                this.brokerConn.addSubscribeListener(this.path, (path: string, ts: number, qual: number, value: any) => {
-                    const msg = {
-                        path: path,
-                        timestamp: ts,
-                        quality: qual,
-                        payload: value
-                    };
-                    lazyThis.send(msg);
-                });
-            }).then(() => {
-                return this.brokerConn.subscribe({ path: this.path, resume: this.resume });
-            })
-            .then(() => {
-                if (this.brokerConn.connected) {
-                    lazyThis.status({
-                        fill: 'green',
-                        shape: 'dot',
-                        text: 'node-red:common.status.connected'
-                    });
-                }
-            }).catch((e) => {
-                lazyThis.error('Error during node creation: ' + e);
+            lazyThis.status({
+                fill: 'red',
+                shape: 'ring',
+                text: 'node-red:common.status.disconnected'
             });
 
-        lazyThis.on('close', (done: any) => {
-            if (this.brokerConn) {
-                lazyThis.status({
-                    fill: 'red',
-                    shape: 'ring',
-                    text: 'node-red:common.status.disconnected'
-                });
-                this.brokerConn.unsubscribe({ path: this.path })
-                    .then(() => {
-                        return this.brokerConn.deregister(this);
-                    });
+            if (!this.brokerConn) {
+                lazyThis.error('Kolibri: missing broker configuration');
+                return;
             }
-            done();
-        });
-    }
+
+            if (!this.path) {
+                lazyThis.error('Kolibri: path not defined for node ' + this.name);
+                return;
+            }
+
+            this.brokerConn.register(this)
+                .then(() => {
+                    this.brokerConn.addSubscribeListener(this.path, (path: string, ts: number, qual: number, value: any) => {
+                        const msg = {
+                            path: path,
+                            timestamp: ts,
+                            quality: qual,
+                            payload: value
+                        };
+                        lazyThis.send(msg);
+                    });
+                }).then(() => {
+                    return this.brokerConn.subscribe({ path: this.path, resume: this.resume });
+                })
+                .then(() => {
+                    if (this.brokerConn.connected) {
+                        lazyThis.status({
+                            fill: 'green',
+                            shape: 'dot',
+                            text: 'node-red:common.status.connected'
+                        });
+                    }
+                }).catch((e) => {
+                    lazyThis.error('Error during node creation: ' + e);
+                });
+
+            lazyThis.on('close', (done: any) => {
+                if (this.brokerConn) {
+                    lazyThis.status({
+                        fill: 'red',
+                        shape: 'ring',
+                        text: 'node-red:common.status.disconnected'
+                    });
+                    this.brokerConn.unsubscribe({ path: this.path })
+                        .then(() => {
+                            return this.brokerConn.deregister(this);
+                        });
+                }
+                done();
+            });
+        }
     }
 
     RED.nodes.registerType('kolibri-in', KolibriInNode as any);
