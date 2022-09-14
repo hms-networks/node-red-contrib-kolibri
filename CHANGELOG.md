@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.0.3
+
+- fix: use Error's message property for errors
+- fix: remove multiple jest configurations
+- chore: update npm dependencies
+
 ## 1.0.2
 
 - chore: update npm dependencies
