@@ -159,14 +159,14 @@ const nodeInit: NodeInitializer = (RED): void => {
                 await this.client.connect();
             }
             catch (e: any) {
-                this.lazyThis.error(e.message);
+                this.lazyThis.error(e?.message || 'unknown error');
                 this.connected = false;
                 this.connecting = false;
                 this.nodes.forEach((node: any) => {
                     node.status({
                         fill: 'red',
                         shape: 'ring',
-                        text: e.message
+                        text: e?.message || 'unknown error'
                     });
                 });
                 return;
@@ -209,18 +209,18 @@ const nodeInit: NodeInitializer = (RED): void => {
                 });
             }
             catch (e: any) {
-                this.lazyThis.error('Login failed: ' + e.kolibriError.message);
+                this.lazyThis.error('Login failed: ' + e?.message || 'unknown error');
                 this.connected = false;
                 this.connecting = false;
-                if (e.kolibriError.message === 'access denied') {
-                    e.kolibriError.message = 'invalid broker settings';
+                if (e?.message === 'Access denied error') {
+                    e.message = 'invalid broker settings';
                 }
 
                 this.nodes.forEach((node: any) => {
                     node.status({
                         fill: 'red',
                         shape: 'ring',
-                        text: e.kolibriError.message
+                        text: e?.message || 'unknown error'
                     });
                 });
             }
@@ -269,7 +269,7 @@ const nodeInit: NodeInitializer = (RED): void => {
                 });
             }
             catch (e: any) {
-                this.lazyThis.error('Subscription failed: ' + e.kolibriError.message + ' ' + subscribeParams.path);
+                this.lazyThis.error('Subscription failed: ' + e?.message || 'unknown error' + ' ' + subscribeParams.path);
 
                 // Change status for node
                 this.nodes.forEach((node: any) => {
@@ -277,7 +277,7 @@ const nodeInit: NodeInitializer = (RED): void => {
                         node.status({
                             fill: 'yellow',
                             shape: 'ring',
-                            text: e.kolibriError.message
+                            text: e?.message || 'unknown error'
                         });
                     }
                 });
@@ -312,7 +312,7 @@ const nodeInit: NodeInitializer = (RED): void => {
                 subscription.subscribed = false;
             }
             catch (e: any) {
-                this.lazyThis.warn('Unsubscribe failed ' + e.kolibriError.message);
+                this.lazyThis.warn('Unsubscribe failed ' + e?.message || 'unknown error');
             }
         }
 
@@ -325,14 +325,14 @@ const nodeInit: NodeInitializer = (RED): void => {
                 await this.client.write(writeParams);
             }
             catch (e: any) {
-                this.lazyThis.error('Write failed: ' + e.kolibriError.message + ' ' + pointState.path);
+                this.lazyThis.error('Write failed: ' + e?.message || 'unknown error' + ' on path: ' + pointState.path);
 
                 this.nodes.forEach((node: any) => {
                     if (node.path === pointState.path) {
                         node.status({
                             fill: 'yellow',
                             shape: 'ring',
-                            text: e.kolibriError.message
+                            text: e?.message || 'unknown error'
                         });
                     }
                 });
